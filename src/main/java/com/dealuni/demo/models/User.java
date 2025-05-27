@@ -1,6 +1,7 @@
 package com.dealuni.demo.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 @Entity
@@ -42,13 +43,13 @@ public class User {
                     "o cifră și un caracter special.")
     private String password;
 
-    @Column(unique = true, nullable = false, length = 100)
-    private String universityName;
-
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    @NotNull(message = "Numele universității este obligatoriu")
+    private University university;
+
     private Boolean isVerified = false;
 
-    @Column(nullable = false)
     private Boolean isBlocked = false;
 
     public Long getId() {
@@ -91,12 +92,12 @@ public class User {
         this.password = password;
     }
 
-    public String getUniversityName() {
-        return universityName;
+    public University getUniversity() {
+        return university;
     }
 
-    public void setUniversityName(String universityName) {
-        this.universityName = universityName;
+    public void setUniversity(University university) {
+        this.university = university;
     }
 
     public Boolean getVerified() {

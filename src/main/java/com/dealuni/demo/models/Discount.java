@@ -67,7 +67,6 @@ public class Discount {
     private LocalDateTime createdAt;
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 30)
     @NotNull(message = "Categoria este obligatorie")
     private Category category;
 
