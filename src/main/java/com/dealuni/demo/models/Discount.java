@@ -98,12 +98,12 @@ public class Discount {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getDescription() {
@@ -122,12 +122,12 @@ public class Discount {
         this.percentage = percentage;
     }
 
-    public String getCity() {
-        return city;
+    public Set<Category> getCategories() {
+        return categories;
     }
 
-    public void setCity(String city) {
-        this.city = city;
+    public void setCategories(Set<Category> categories) {
+        this.categories = categories;
     }
 
     public LocalDate getValidUntil() {
@@ -176,6 +176,14 @@ public class Discount {
 
     public void setCompany(Company company) {
         this.company = company;
+    }
+
+    public User getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(User createdBy) {
+        this.createdBy = createdBy;
     }
 }
 
