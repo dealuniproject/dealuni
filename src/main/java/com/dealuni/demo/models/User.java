@@ -12,7 +12,12 @@ import jakarta.validation.constraints.Pattern;
         private Long id;
 
         @Column(unique = true, nullable = false, length = 60)
-        @Pattern(regexp = "^[a-zA-Z]+\\.[a-zA-Z]+@(stud\\.upb\\.ro|student\\.utcb\\.ro|stud\\.usamv\\.ro|stud\\.unibuc\\.ro|stud\\.umfcd\\.ro|student\\.ase\\.ro|student\\.snspa\\.ro|stud\\.utcluj\\.ro|stud\\.usamvcluj\\.ro|stud\\.ubbcluj\\.ro|stud\\.umfcluj\\.ro|student\\.uaic\\.ro|student\\.umfiasi\\.ro|student\\.upt\\.ro|student\\.usvt\\.ro|student\\.uvt\\.ro|student\\.umft\\.ro|student\\.uoradea\\.ro|edu\\.ucv\\.ro|student\\.umfst\\.ro|uab\\.ro|uav\\.ro|ub\\.ro|unitbv\\.ro|univ-ovidius\\.ro|cmu-edu\\.eu|ugal\\.ro|upg-ploiesti\\.ro|ulbsibiu\\.ro|usv\\.ro|valahia\\.ro|utgjiu\\.ro|anmb\\.ro|afahc\\.ro|aft\\.ro)$",
+        @Pattern(regexp = "^[a-zA-Z]+\\.[a-zA-Z]+@(stud\\.upb\\.ro|student\\.utcb\\.ro|stud\\.usamv\\.ro|stud\\.unibuc\\.ro" +
+                "|stud\\.umfcd\\.ro|student\\.ase\\.ro|student\\.snspa\\.ro|stud\\.utcluj\\.ro|stud\\.usamvcluj\\.ro" +
+                "|stud\\.ubbcluj\\.ro|stud\\.umfcluj\\.ro|student\\.uaic\\.ro|student\\.umfiasi\\.ro|student\\.upt\\.ro" +
+                "|student\\.usvt\\.ro|student\\.uvt\\.ro|student\\.umft\\.ro|student\\.uoradea\\.ro|edu\\.ucv\\.ro" +
+                "|student\\.umfst\\.ro|uab\\.ro|uav\\.ro|ub\\.ro|unitbv\\.ro|univ-ovidius\\.ro|cmu-edu\\.eu|ugal\\.ro" +
+                "|upg-ploiesti\\.ro|ulbsibiu\\.ro|usv\\.ro|valahia\\.ro|utgjiu\\.ro|anmb\\.ro|afahc\\.ro|aft\\.ro)$",
                 message = "Emailul trebuie să aparțină unui domeniu instituțional valid")
         private String email;
 
@@ -33,7 +38,8 @@ import jakarta.validation.constraints.Pattern;
 
         @Column(nullable = false, length = 50)
         @Pattern(regexp = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()\\-_=+{};:,<.>])(?=.{8,})" + ".*$",
-                message = "Parola trebuie să aibă cel puțin 8 caractere și să conțină cel puțin o literă mare, o cifră și un caracter special.")
+                message = "Parola trebuie să aibă cel puțin 8 caractere și să conțină cel puțin o literă mare, " +
+                        "o cifră și un caracter special.")
         private String password;
 
         @Column(unique = true, nullable = false, length = 100)

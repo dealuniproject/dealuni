@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Table(name = "discounts")
@@ -17,16 +18,19 @@ public class Discount {
 
     @Pattern(
             regexp = "^[\\p{L}0-9 .,!%&()\\-]{3,150}$",
-            message = "Numele discountului trebuie să conțină între 3 și 150 de caractere: litere, cifre, spații și simboluri uzuale (.,!%&()-)"
+            message = "Titlul discountului trebuie să conțină între 3 și 150 de caractere: litere, cifre, " +
+                    "spații și simboluri uzuale (.,!%&()-)"
     )
-    @Column(nullable = false, length = 150)
-    private String name;
+    @Column(length = 150)
+    @NotNull(message = "Titlul discountului nu poate fi null")
+    private String title;
 
     @Pattern(
             regexp = "^[\\p{L}0-9.,!?%:;\"'()\\-\\/\\s]{10,600}$",
-            message = "Descrierea trebuie să conțină între 10 și 600 de caractere și poate include litere, cifre, spații și semne de punctuație uzuale"
+            message = "Descrierea trebuie să conțină între 10 și 600 de caractere și poate include litere, " +
+                    "cifre, spații și semne de punctuație uzuale"
     )
-    @Column(nullable = false, length = 600)
+    @Column(length = 600)
     private String description;
 
     @Min(value = 1, message = "Reducerea trebuie să fie de cel puțin 1%")
@@ -36,10 +40,23 @@ public class Discount {
 
     @Pattern(
             regexp = "^[A-ZĂÂÎȘȚ][a-zăâîșțA-ZĂÂÎȘȚ\\- ]{1,49}$",
-            message = "Numele orașului trebuie să înceapă cu literă mare și să conțină doar litere, spații sau cratimă"
+            message = "Numele orașului trebuie să înceapă cu literă mare și să conțină doar litere, " +
+                    "spații sau cratimă"
     )
-    @Column(nullable = false, length = 50)
-    private String city;
+
+    //minim un oras in set
+    @Size(min = 1)
+    //discount-ul poate sa aiba unul sau mai multe orase
+    //orasele se salveaza intr-un table pentru orase
+    @ElementCollection(fetch = FetchType.EAGER)
+    //un oras se salveaza ca un string
+    @Enumerated(EnumType.STRING)
+    @CollectionTable(
+            name = "cities",
+            joinColumns = @JoinColumn(name = "discount_id")
+    )
+    @Column(name = "category_enum")
+    private Set<Category> categories;
 
     @Future(message = "Data de expirare trebuie să fie în viitor")
     @Column(nullable = false)
@@ -50,7 +67,7 @@ public class Discount {
     private LocalDateTime createdAt;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 30)
+    @Column(length = 30)
     @NotNull(message = "Categoria este obligatorie")
     private Category category;
 
@@ -60,7 +77,10 @@ public class Discount {
     @Column(length = 20)
     private String code;
 
-
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "created_by", referencedColumnName = "id", nullable = false)
+    @NotNull(message = "Creatorul discountului nu poate fi null")
+    private User createdBy;
 }
 
 
