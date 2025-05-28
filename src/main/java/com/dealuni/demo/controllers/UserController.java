@@ -1,8 +1,8 @@
 package com.dealuni.demo.controllers;
 
-import com.dealuni.demo.models.User;
+import com.dealuni.demo.dto.UserRequest;
+import com.dealuni.demo.dto.UserResponse;
 import com.dealuni.demo.services.UserService;
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,30 +24,30 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> registerNewUser(@RequestBody User user) {
-        User newUser = userService.registerNewUser(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+    public ResponseEntity<UserResponse> registerNewUser(@RequestBody UserRequest userRequest) {
+        UserResponse userResponse = userService.registerNewUser(userRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userResponse);
     }
 
     //get all users
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.getAllUsers();
-        return ResponseEntity.ok(users);
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
+        List<UserResponse> userResponseList = userService.getAllExistingUsers();
+        return ResponseEntity.ok(userResponseList);
     }
 
     //get user by id
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        User user = userService.getUserById(id);
-        return ResponseEntity.ok(user);
+    public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
+        UserResponse userResponse = userService.getUserById(id);
+        return ResponseEntity.ok(userResponse);
     }
 
     //update user by id
     @PatchMapping("/{id}")
-    public ResponseEntity<User> updateUserById(@PathVariable Long id, @RequestBody User newUserDetails) {
-            User updatedUser = userService.updateUserById(id, newUserDetails);
-            return ResponseEntity.ok(updatedUser);
+    public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @RequestBody UserRequest userRequest) {
+        UserResponse userResponse = userService.updateUserById(id, userRequest);
+        return ResponseEntity.ok(userResponse);
     }
 
     //delete user by id

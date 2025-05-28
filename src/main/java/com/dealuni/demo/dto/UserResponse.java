@@ -20,6 +20,9 @@ public class UserResponse {
         this.isBlocked = isBlocked;
     }
 
+    public UserResponse() {
+    }
+
     public Long getId() {
         return id;
     }
