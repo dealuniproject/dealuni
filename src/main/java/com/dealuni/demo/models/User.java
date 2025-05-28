@@ -1,6 +1,5 @@
 package com.dealuni.demo.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -47,7 +46,7 @@ public class User {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     @NotNull(message = "Numele universității este obligatoriu")
-    private University university;
+    private University universityName;
 
     private Boolean isVerified = false;
 
@@ -93,12 +92,12 @@ public class User {
         this.password = password;
     }
 
-    public University getUniversity() {
-        return university;
+    public University getUniversityName() {
+        return universityName;
     }
 
-    public void setUniversity(University university) {
-        this.university = university;
+    public void setUniversityName(University universityName) {
+        this.universityName = universityName;
     }
 
     public Boolean getVerified() {

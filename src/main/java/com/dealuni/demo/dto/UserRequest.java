@@ -32,11 +32,18 @@ public class UserRequest {
     @Column(unique = true, nullable = false, length = 100)
     private String universityName;
 
-    public UserRequest(String username, String firstName, String lastName, String universityName) {
+    @Column(nullable = false, length = 50)
+    private String password;
+
+    public UserRequest(String username, String firstName, String lastName, String universityName, String password) {
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
         this.universityName = universityName;
+        this.password = password;
+    }
+
+    public UserRequest() {
     }
 
     public String getUsername() {
@@ -69,5 +76,13 @@ public class UserRequest {
 
     public void setUniversityName(String universityName) {
         this.universityName = universityName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
