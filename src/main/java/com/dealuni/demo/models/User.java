@@ -1,6 +1,8 @@
 package com.dealuni.demo.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 @Entity
@@ -35,20 +37,20 @@ public class User {
     @Column(nullable = false, length = 50)
     private String lastName;
 
-
+    //@JsonIgnore
     @Column(nullable = false, length = 50)
     @Pattern(regexp = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()\\-_=+{};:,<.>])(?=.{8,})" + ".*$",
             message = "Parola trebuie să aibă cel puțin 8 caractere și să conțină cel puțin o literă mare, " +
                     "o cifră și un caracter special.")
     private String password;
 
-    @Column(unique = true, nullable = false, length = 100)
-    private String universityName;
-
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    @NotNull(message = "Numele universității este obligatoriu")
+    private University university;
+
     private Boolean isVerified = false;
 
-    @Column(nullable = false)
     private Boolean isBlocked = false;
 
     public Long getId() {
@@ -91,12 +93,12 @@ public class User {
         this.password = password;
     }
 
-    public String getUniversityName() {
-        return universityName;
+    public University getUniversity() {
+        return university;
     }
 
-    public void setUniversityName(String universityName) {
-        this.universityName = universityName;
+    public void setUniversity(University university) {
+        this.university = university;
     }
 
     public Boolean getVerified() {

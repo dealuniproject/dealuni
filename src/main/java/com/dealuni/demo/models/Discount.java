@@ -67,7 +67,6 @@ public class Discount {
     private LocalDateTime createdAt;
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 30)
     @NotNull(message = "Categoria este obligatorie")
     private Category category;
 
@@ -82,7 +81,7 @@ public class Discount {
     @JoinColumn(name = "created_by", referencedColumnName = "id", nullable = false)
     @NotNull(message = "Creatorul discountului nu poate fi null")
     private User createdBy;
-  
+
     //un discount poate sa fie numai de la o companie, o companie poate sa aibe multe discounturi
     @ManyToOne(fetch = FetchType.EAGER)
     //company_id este foreign key, face referinta la id din modelul Company
