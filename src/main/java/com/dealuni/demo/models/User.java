@@ -1,5 +1,6 @@
 package com.dealuni.demo.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -36,7 +37,7 @@ public class User {
     @Column(nullable = false, length = 50)
     private String lastName;
 
-
+    //@JsonIgnore
     @Column(nullable = false, length = 50)
     @Pattern(regexp = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()\\-_=+{};:,<.>])(?=.{8,})" + ".*$",
             message = "Parola trebuie să aibă cel puțin 8 caractere și să conțină cel puțin o literă mare, " +
