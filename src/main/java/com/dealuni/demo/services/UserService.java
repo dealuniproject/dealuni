@@ -23,6 +23,7 @@ public class UserService {
     }
 
     public UserResponse registerNewUser(UserRequest userRequest) {
+        validateUser(userRequest);
         User user = convertUserRequestToUserEntity(userRequest);
         User savedUser = userRepository.save(user);
         return convertUserEntityToUserResponse(savedUser);
@@ -36,14 +37,15 @@ public class UserService {
 
     //get user by id
     public UserResponse getUserById(Long Id) {
-        User user = userRepository.findById(Id).orElseThrow(() -> new NoSuchElementException("User not found"));
+        User user = userRepository.findById(Id).orElseThrow(() -> new NoSuchElementException("User-ul nu a fost găsit."));
         return convertUserEntityToUserResponse(user);
     }
 
     //update user by id
     public UserResponse updateUserById(Long id, UserRequest userRequest) {
+        validateUser(userRequest);
         User existingUser = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException("User nu a fost găsit după id: " + id));
 
         //daca exista un firstname in request, ii dau userului existent un alt firstname
         if (userRequest.getFirstName() != null) {
@@ -105,5 +107,60 @@ public class UserService {
         user.setUniversityName(University.valueOf(userRequest.getUniversityName()));
         user.setPassword(userRequest.getPassword());
         return user;
+    }
+
+    public void validateUser(UserRequest userRequest) {
+
+        if (userRequest.getUsername() == null || userRequest.getUsername().trim().isEmpty()) {
+            throw new IllegalArgumentException("Username-ul nu poate fi null.");
+        }
+
+        if (userRequest.getUsername().length() > 60) {
+            throw new IllegalArgumentException("Username-ul nu poate depăși 60 de caractere.");
+        }
+
+        String regex = "^[a-zA-Z0-9._-]+@(stud\\.upb\\.ro|student\\.utcb\\.ro|stud\\.usamv\\.ro|stud\\.unibuc\\.ro|stud\\.umfcd\\.ro|student\\.ase\\.ro|student\\.snspa\\.ro|stud\\.utcluj\\.ro|stud\\.usamvcluj\\.ro|stud\\.ubbcluj\\.ro|stud\\.umfcluj\\.ro|student\\.uaic\\.ro|student\\.umfiasi\\.ro|student\\.upt\\.ro|student\\.usvt\\.ro|e-uvt\\.ro|student\\.umft\\.ro|student\\.uoradea\\.ro|edu\\.ucv\\.ro|student\\.umfst\\.ro|uab\\.ro|uav\\.ro|ub\\.ro|unitbv\\.ro|univ-ovidius\\.ro|cmu-edu\\.eu|ugal\\.ro|upg-ploiesti\\.ro|ulbsibiu\\.ro|usv\\.ro|valahia\\.ro|utgjiu\\.ro|anmb\\.ro|afahc\\.ro|aft\\.ro)$";
+
+        if (!userRequest.getUsername().matches(regex)) {
+            throw new IllegalArgumentException("Email-ul trebuie să aparțină unui domeniu instituțional valid.");
+        }
+
+        if (userRequest.getFirstName() == null || userRequest.getFirstName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Prenumele nu poate fi null.");
+        }
+
+        if (userRequest.getFirstName().length() > 50) {
+            throw new IllegalArgumentException("Prenumele nu poate depăși 50 de caractere.");
+        }
+
+        if (!userRequest.getFirstName().matches("^[A-ZĂÂÎȘȚ][a-zăâîșțA-ZĂÂÎȘȚ\\- ]{1,49}$")) {
+            throw new IllegalArgumentException("Prenumele trebuie să înceapă cu literă mare și să conțină doar litere, cratimă sau spațiu.");
+        }
+
+        if (userRequest.getLastName() == null || userRequest.getLastName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Numele nu poate fi null.");
+        }
+
+        if (userRequest.getLastName().length() > 50) {
+            throw new IllegalArgumentException("Numele nu poate depăși 50 de caractere.");
+        }
+
+        if (!userRequest.getLastName().matches("^[A-ZĂÂÎȘȚ][a-zăâîșțA-ZĂÂÎȘȚ\\- ]{1,49}$")) {
+            throw new IllegalArgumentException("Numele trebuie să înceapă cu literă mare și să conțină doar litere, cratimă sau spațiu.");
+        }
+
+        if (userRequest.getUniversityName() == null) {
+            throw new IllegalArgumentException("Numele universității nu poate fi null.");
+        }
+
+        if (userRequest.getPassword() == null || userRequest.getPassword().trim().isEmpty()) {
+            throw new IllegalArgumentException("Parola nu poate fi null.");
+        }
+
+        if (!userRequest.getPassword().matches("^(?=.*[A-Z]).{8,}$")) {
+            throw new IllegalArgumentException(
+                    "Parola trebuie să aibă cel puțin 8 caractere și să conțină cel puțin o literă mare.");
+        }
+
     }
 }
