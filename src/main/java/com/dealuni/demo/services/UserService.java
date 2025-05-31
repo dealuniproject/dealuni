@@ -158,9 +158,7 @@ public class UserService {
         }
 
         if (!userRequest.getPassword().matches("^(?=.*[A-Z]).{8,}$")) {
-            throw new IllegalArgumentException(
-                    "Parola trebuie să aibă cel puțin 8 caractere și să conțină cel puțin o literă mare.");
+            throw new IllegalArgumentException("Parola trebuie să aibă cel puțin 8 caractere și să conțină cel puțin o literă mare.");
         }
-
     }
 }
