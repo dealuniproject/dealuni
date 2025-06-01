@@ -6,7 +6,6 @@ import com.dealuni.demo.models.University;
 import com.dealuni.demo.models.User;
 import com.dealuni.demo.repositories.UserRepository;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -43,9 +42,9 @@ public class UserService {
 
     //update user by id
     public UserResponse updateUserById(Long id, UserRequest userRequest) {
-        validateUser(userRequest);
+        //validateUser(userRequest);
         User existingUser = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User nu a fost găsit după id: " + id));
+                .orElseThrow(() -> new RuntimeException("User-ul nu a fost găsit."));
 
         //daca exista un firstname in request, ii dau userului existent un alt firstname
         if (userRequest.getFirstName() != null) {

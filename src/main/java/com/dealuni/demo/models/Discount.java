@@ -3,7 +3,6 @@ package com.dealuni.demo.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import org.hibernate.annotations.CreationTimestamp;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -19,29 +18,29 @@ public class Discount {
     @Pattern(
             regexp = "^[\\p{L}0-9 .,!%&()\\-]{3,150}$",
             message = "Titlul discountului trebuie să conțină între 3 și 150 de caractere: litere, cifre, " +
-                    "spații și simboluri uzuale (.,!%&()-)"
+                    "spații și simboluri uzuale."
     )
     @Column(length = 150)
-    @NotNull(message = "Titlul discountului nu poate fi null")
+    @NotNull(message = "Titlul discountului nu poate fi null.")
     private String title;
 
     @Pattern(
             regexp = "^[\\p{L}0-9.,!?%:;\"'()\\-\\/\\s]{10,600}$",
             message = "Descrierea trebuie să conțină între 10 și 600 de caractere și poate include litere, cifre, " +
-                    "spații și semne de punctuație uzuale"
+                    "spații și semne de punctuație uzuale."
     )
     @Column(length = 600)
     private String description;
 
-    @Min(value = 1, message = "Reducerea trebuie să fie de cel puțin 1%")
-    @Max(value = 100, message = "Reducerea nu poate depăși 100%")
+    @Min(value = 1, message = "Reducerea trebuie să fie de cel puțin 1%.")
+    @Max(value = 100, message = "Reducerea nu poate depăși 100%.")
     @Column(nullable = false)
     private Integer percentage;
 
     @Pattern(
             regexp = "^[A-ZĂÂÎȘȚ][a-zăâîșțA-ZĂÂÎȘȚ\\- ]{1,49}$",
             message = "Numele orașului trebuie să înceapă cu literă mare și să conțină doar litere, " +
-                    "spații sau cratimă"
+                    "spații sau cratimă."
     )
 
     //minim un oras in set
@@ -58,7 +57,7 @@ public class Discount {
     @Column(name = "category_enum")
     private Set<Category> categories;
 
-    @Future(message = "Data de expirare trebuie să fie în viitor")
+    @Future(message = "Data de expirare trebuie să fie în viitor.")
     @Column(nullable = false)
     private LocalDate validUntil;
 
@@ -67,11 +66,11 @@ public class Discount {
     private LocalDateTime createdAt;
 
     @Enumerated(EnumType.STRING)
-    @NotNull(message = "Categoria este obligatorie")
+    @NotNull(message = "Categoria este obligatorie.")
     private Category category;
 
     @Column(nullable = false, length = 200)
-    @NotNull(message = "Logo-ul companiei este obligatoriu")
+    @NotNull(message = "Logo-ul companiei este obligatoriu.")
     private String logo;
 
     @Column(length = 20)
@@ -79,14 +78,14 @@ public class Discount {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "created_by", referencedColumnName = "id", nullable = false)
-    @NotNull(message = "Creatorul discountului nu poate fi null")
+    @NotNull(message = "Creatorul discountului nu poate fi null.")
     private User createdBy;
 
     //un discount poate sa fie numai de la o companie, o companie poate sa aibe multe discounturi
     @ManyToOne(fetch = FetchType.EAGER)
     //company_id este foreign key, face referinta la id din modelul Company
     @JoinColumn(name = "company_id", referencedColumnName = "id")
-    @NotNull(message = "ID-ul companiei nu poate fi null")
+    @NotNull(message = "ID-ul companiei nu poate fi null.")
     private Company company;
 
     public Long getId() {
