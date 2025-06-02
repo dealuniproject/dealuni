@@ -1,6 +1,7 @@
 package com.dealuni.demo.dto;
 
 import com.dealuni.demo.models.Category;
+import com.dealuni.demo.models.City;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.time.LocalDate;
@@ -30,14 +31,16 @@ public class DiscountRequest {
     @Column(nullable = false)
     private Integer percentage;
 
+    /*
     @Pattern(
             regexp = "^[A-ZĂÂÎȘȚ][a-zăâîșțA-ZĂÂÎȘȚ\\- ]{1,49}$",
             message = "Numele orașului trebuie să înceapă cu literă mare și să conțină doar litere, " +
                     "spații sau cratimă."
     )
+    */
 
-    //minim un oras in set
-    @Size(min = 1)
+    @NotNull(message = "Lista de orașe nu poate fi null.")
+    @Size(min = 1, message = "Lista de orașe trebuie să conțină cel puțin un oraș.")
     //discount-ul poate sa aiba unul sau mai multe orase
     //orasele se salveaza intr-un table pentru orase
     @ElementCollection(fetch = FetchType.EAGER)
@@ -47,8 +50,8 @@ public class DiscountRequest {
             name = "cities",
             joinColumns = @JoinColumn(name = "discount_id")
     )
-    @Column(name = "category_enum")
-    private Set<Category> cities;
+    @Column(name = "city_enum")
+    private Set<City> cities;
 
     @Future(message = "Data de expirare trebuie să fie în viitor.")
     @Column(nullable = false)
@@ -65,21 +68,19 @@ public class DiscountRequest {
     @Column(length = 20)
     private String code;
 
-    /*
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "created_by", referencedColumnName = "id", nullable = false)
-    @NotNull(message = "Creatorul discountului nu poate fi null.")
-    private User createdBy;
+    //@NotNull(message = "Creatorul discountului nu poate fi null.")
+    private Long createdBy;
 
     //un discount poate sa fie numai de la o companie, o companie poate sa aibe multe discounturi
     @ManyToOne(fetch = FetchType.EAGER)
     //company_id este foreign key, face referinta la id din modelul Company
     @JoinColumn(name = "company_id", referencedColumnName = "id")
     @NotNull(message = "ID-ul companiei nu poate fi null.")
-    private Company company;
-    */
+    private Long company;
 
-    public DiscountRequest(String title, String description, Integer percentage, Set<Category> cities, LocalDate validUntil, Category category, String logo, String code) {
+    public DiscountRequest(String title, String description, Integer percentage, Set<City> cities, LocalDate validUntil, Category category, String logo, String code, Long createdBy, Long company) {
         this.title = title;
         this.description = description;
         this.percentage = percentage;
@@ -88,6 +89,8 @@ public class DiscountRequest {
         this.category = category;
         this.logo = logo;
         this.code = code;
+        this.createdBy = createdBy;
+        this.company = company;
     }
 
     public DiscountRequest() {
@@ -117,11 +120,11 @@ public class DiscountRequest {
         this.percentage = percentage;
     }
 
-    public Set<Category> getCities() {
+    public Set<City> getCities() {
         return cities;
     }
 
-    public void setCities(Set<Category> cities) {
+    public void setCities(Set<City> cities) {
         this.cities = cities;
     }
 
@@ -155,5 +158,21 @@ public class DiscountRequest {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public Long getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(Long createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Long getCompany() {
+        return company;
+    }
+
+    public void setCompany(Long company) {
+        this.company = company;
     }
 }
