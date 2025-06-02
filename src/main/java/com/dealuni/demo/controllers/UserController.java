@@ -3,6 +3,7 @@ package com.dealuni.demo.controllers;
 import com.dealuni.demo.dto.UserRequest;
 import com.dealuni.demo.dto.UserResponse;
 import com.dealuni.demo.services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,7 @@ public class UserController {
 
 
     @PostMapping
-    public ResponseEntity<UserResponse> registerNewUser(@RequestBody UserRequest userRequest) {
+    public ResponseEntity<UserResponse> registerNewUser(@Valid @RequestBody UserRequest userRequest) {
         UserResponse userResponse = userService.registerNewUser(userRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(userResponse);
     }
@@ -44,7 +45,7 @@ public class UserController {
 
     //update user by id
     @PatchMapping("/{id}")
-    public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @RequestBody UserRequest userRequest) {
+    public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @Valid @RequestBody UserRequest userRequest) {
         UserResponse userResponse = userService.updateUserById(id, userRequest);
         return ResponseEntity.ok(userResponse);
     }

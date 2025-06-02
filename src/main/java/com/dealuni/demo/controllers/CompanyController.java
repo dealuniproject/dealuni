@@ -3,6 +3,7 @@ package com.dealuni.demo.controllers;
 import com.dealuni.demo.dto.CompanyRequest;
 import com.dealuni.demo.dto.CompanyResponse;
 import com.dealuni.demo.services.CompanyService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class CompanyController {
     }
 
     @PostMapping
-    public ResponseEntity<CompanyResponse> createNewCompany(@RequestBody CompanyRequest companyRequest) {
+    public ResponseEntity<CompanyResponse> createNewCompany(@Valid @RequestBody CompanyRequest companyRequest) {
         CompanyResponse companyResponse = companyService.createNewCompany(companyRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(companyResponse);
     }
@@ -37,7 +38,7 @@ public class CompanyController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<CompanyResponse> updateCompany(@PathVariable Long id, @RequestBody CompanyRequest companyRequest) {
+    public ResponseEntity<CompanyResponse> updateCompany(@PathVariable Long id, @Valid @RequestBody CompanyRequest companyRequest) {
         CompanyResponse companyResponse = companyService.updateCompanyById(id, companyRequest);
         return ResponseEntity.ok(companyResponse);
     }

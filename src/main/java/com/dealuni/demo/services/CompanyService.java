@@ -36,7 +36,6 @@ public class CompanyService {
     }
 
     public CompanyResponse updateCompanyById(Long id, CompanyRequest companyRequest) {
-        validateCompany(companyRequest);
         Company existingCompany = companyRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Compania nu a fost găsită."));
 
@@ -122,3 +121,4 @@ public class CompanyService {
         }
     }
 }
+
