@@ -1,19 +1,12 @@
-package com.dealuni.demo.models;
+package com.dealuni.demo.dto;
 
+import com.dealuni.demo.models.Category;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Set;
 
-@Entity
-@Table(name = "discounts")
-public class Discount {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class DiscountRequest {
 
     @Pattern(
             regexp = "^[\\p{L}0-9 .,!%&()\\-]{3,150}$",
@@ -54,16 +47,12 @@ public class Discount {
             name = "cities",
             joinColumns = @JoinColumn(name = "discount_id")
     )
-    @Column(name = "city_enum")
-    private Set<City> cities;
+    @Column(name = "category_enum")
+    private Set<Category> cities;
 
     @Future(message = "Data de expirare trebuie să fie în viitor.")
     @Column(nullable = false)
     private LocalDate validUntil;
-
-    @CreationTimestamp
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
 
     @Enumerated(EnumType.STRING)
     @NotNull(message = "Categoria este obligatorie.")
@@ -76,6 +65,7 @@ public class Discount {
     @Column(length = 20)
     private String code;
 
+    /*
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "created_by", referencedColumnName = "id", nullable = false)
     @NotNull(message = "Creatorul discountului nu poate fi null.")
@@ -87,13 +77,20 @@ public class Discount {
     @JoinColumn(name = "company_id", referencedColumnName = "id")
     @NotNull(message = "ID-ul companiei nu poate fi null.")
     private Company company;
+    */
 
-    public Long getId() {
-        return id;
+    public DiscountRequest(String title, String description, Integer percentage, Set<Category> cities, LocalDate validUntil, Category category, String logo, String code) {
+        this.title = title;
+        this.description = description;
+        this.percentage = percentage;
+        this.cities = cities;
+        this.validUntil = validUntil;
+        this.category = category;
+        this.logo = logo;
+        this.code = code;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public DiscountRequest() {
     }
 
     public String getTitle() {
@@ -120,11 +117,11 @@ public class Discount {
         this.percentage = percentage;
     }
 
-    public Set<City> getCities() {
+    public Set<Category> getCities() {
         return cities;
     }
 
-    public void setCities(Set<City> cities) {
+    public void setCities(Set<Category> cities) {
         this.cities = cities;
     }
 
@@ -134,14 +131,6 @@ public class Discount {
 
     public void setValidUntil(LocalDate validUntil) {
         this.validUntil = validUntil;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
     }
 
     public Category getCategory() {
@@ -167,22 +156,4 @@ public class Discount {
     public void setCode(String code) {
         this.code = code;
     }
-
-    public Company getCompany() {
-        return company;
-    }
-
-    public void setCompany(Company company) {
-        this.company = company;
-    }
-
-    public User getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(User createdBy) {
-        this.createdBy = createdBy;
-    }
 }
-
-

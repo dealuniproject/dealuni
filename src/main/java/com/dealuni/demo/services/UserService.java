@@ -42,7 +42,6 @@ public class UserService {
 
     //update user by id
     public UserResponse updateUserById(Long id, UserRequest userRequest) {
-        //validateUser(userRequest);
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User-ul nu a fost găsit."));
 

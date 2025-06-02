@@ -7,6 +7,13 @@ public class CompanyResponse {
     private String description;
     private String logo;
 
+    public CompanyResponse(Long id, String name, String description, String logo) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.logo = logo;
+    }
+
     public CompanyResponse() {
     }
 
