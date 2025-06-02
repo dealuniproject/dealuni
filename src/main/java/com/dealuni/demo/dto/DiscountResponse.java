@@ -1,7 +1,7 @@
 package com.dealuni.demo.dto;
 
 import com.dealuni.demo.models.Category;
-import com.dealuni.demo.models.Company;
+import com.dealuni.demo.models.City;
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -11,25 +11,27 @@ public class DiscountResponse {
     private String title;
     private String description;
     private Integer percentage;
-    private Set<Category> categories;
+    private Set<City> cities;
     private LocalDate validUntil;
-    //private LocalDateTime createdAt;
+    private LocalDate createdAt;
     private Category category;
     private String logo;
     private String code;
-    //private User createdBy;
-    private Company company;
+    private Long createdBy;
+    private Long company;
 
-    public DiscountResponse(Long id, String title, String description, Integer percentage, Set<Category> categories, LocalDate validUntil, Category category, String logo, String code, Company company) {
+    public DiscountResponse(Long id, String title, String description, Integer percentage, Set<City> cities, LocalDate validUntil, LocalDate createdAt, Category category, String logo, String code, Long createdBy, Long company) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.percentage = percentage;
-        this.categories = categories;
+        this.cities = cities;
         this.validUntil = validUntil;
+        this.createdAt = createdAt;
         this.category = category;
         this.logo = logo;
         this.code = code;
+        this.createdBy = createdBy;
         this.company = company;
     }
 
@@ -68,12 +70,12 @@ public class DiscountResponse {
         this.percentage = percentage;
     }
 
-    public Set<Category> getCategories() {
-        return categories;
+    public Set<City> getCities() {
+        return cities;
     }
 
-    public void setCategories(Set<Category> categories) {
-        this.categories = categories;
+    public void setCities(Set<City> cities) {
+        this.cities = cities;
     }
 
     public LocalDate getValidUntil() {
@@ -82,6 +84,14 @@ public class DiscountResponse {
 
     public void setValidUntil(LocalDate validUntil) {
         this.validUntil = validUntil;
+    }
+
+    public LocalDate getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = createdAt;
     }
 
     public Category getCategory() {
@@ -108,11 +118,19 @@ public class DiscountResponse {
         this.code = code;
     }
 
-    public Company getCompany() {
+    public Long getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(Long createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Long getCompany() {
         return company;
     }
 
-    public void setCompany(Company company) {
+    public void setCompany(Long company) {
         this.company = company;
     }
 }

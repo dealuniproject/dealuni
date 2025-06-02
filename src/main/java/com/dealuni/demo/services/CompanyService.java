@@ -117,7 +117,7 @@ public class CompanyService {
         }
 
         if (companyRequest.getLogo().length() > 200) {
-            throw new IllegalArgumentException("URL-ul logo-ului nu poate depăși 100 de caractere.");
+            throw new IllegalArgumentException("URL-ul logo-ului nu poate depăși 200 de caractere.");
         }
     }
 }

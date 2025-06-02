@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
@@ -37,14 +36,8 @@ public class Discount {
     @Column(nullable = false)
     private Integer percentage;
 
-    @Pattern(
-            regexp = "^[A-ZĂÂÎȘȚ][a-zăâîșțA-ZĂÂÎȘȚ\\- ]{1,49}$",
-            message = "Numele orașului trebuie să înceapă cu literă mare și să conțină doar litere, " +
-                    "spații sau cratimă."
-    )
-
-    //minim un oras in set
-    @Size(min = 1)
+    @NotNull(message = "Lista de orașe nu poate fi null.")
+    @Size(min = 1, message = "Lista de orașe trebuie să conțină cel puțin un oraș.")
     //discount-ul poate sa aiba unul sau mai multe orase
     //orasele se salveaza intr-un table pentru orase
     @ElementCollection(fetch = FetchType.EAGER)
@@ -63,7 +56,7 @@ public class Discount {
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
 
     @Enumerated(EnumType.STRING)
     @NotNull(message = "Categoria este obligatorie.")
@@ -136,11 +129,11 @@ public class Discount {
         this.validUntil = validUntil;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public LocalDate getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(LocalDate createdAt) {
         this.createdAt = createdAt;
     }
 
