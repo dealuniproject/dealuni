@@ -2,7 +2,10 @@ package com.dealuni.demo.dto;
 
 import com.dealuni.demo.models.Category;
 import com.dealuni.demo.models.Company;
+import com.dealuni.demo.models.User;
+
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 public class DiscountResponse {
@@ -13,23 +16,25 @@ public class DiscountResponse {
     private Integer percentage;
     private Set<Category> categories;
     private LocalDate validUntil;
-    //private LocalDateTime createdAt;
+    private LocalDateTime createdAt;
     private Category category;
     private String logo;
     private String code;
-    //private User createdBy;
+    private User createdBy;
     private Company company;
 
-    public DiscountResponse(Long id, String title, String description, Integer percentage, Set<Category> categories, LocalDate validUntil, Category category, String logo, String code, Company company) {
+    public DiscountResponse(Long id, String title, String description, Integer percentage, Set<Category> categories, LocalDate validUntil, LocalDateTime createdAt, Category category, String logo, String code, User createdBy, Company company) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.percentage = percentage;
         this.categories = categories;
         this.validUntil = validUntil;
+        this.createdAt = createdAt;
         this.category = category;
         this.logo = logo;
         this.code = code;
+        this.createdBy = createdBy;
         this.company = company;
     }
 
@@ -84,6 +89,14 @@ public class DiscountResponse {
         this.validUntil = validUntil;
     }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public Category getCategory() {
         return category;
     }
@@ -106,6 +119,14 @@ public class DiscountResponse {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public User getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(User createdBy) {
+        this.createdBy = createdBy;
     }
 
     public Company getCompany() {
