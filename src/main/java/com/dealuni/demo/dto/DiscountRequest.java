@@ -31,14 +31,6 @@ public class DiscountRequest {
     @Column(nullable = false)
     private Integer percentage;
 
-    /*
-    @Pattern(
-            regexp = "^[A-ZĂÂÎȘȚ][a-zăâîșțA-ZĂÂÎȘȚ\\- ]{1,49}$",
-            message = "Numele orașului trebuie să înceapă cu literă mare și să conțină doar litere, " +
-                    "spații sau cratimă."
-    )
-    */
-
     @NotNull(message = "Lista de orașe nu poate fi null.")
     @Size(min = 1, message = "Lista de orașe trebuie să conțină cel puțin un oraș.")
     //discount-ul poate sa aiba unul sau mai multe orase

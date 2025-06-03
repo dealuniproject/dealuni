@@ -22,13 +22,6 @@ public class UserController {
         this.userService = userService;
     }
 
-
-    @PostMapping
-    public ResponseEntity<UserResponse> registerNewUser(@Valid @RequestBody UserRequest userRequest) {
-        UserResponse userResponse = userService.registerNewUser(userRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(userResponse);
-    }
-
     //get all users
     @GetMapping
     public ResponseEntity<List<UserResponse>> getAllUsers() {

@@ -2,13 +2,16 @@ package com.dealuni.demo.services;
 
 import com.dealuni.demo.dto.UserRequest;
 import com.dealuni.demo.dto.UserResponse;
+import com.dealuni.demo.models.Role;
 import com.dealuni.demo.models.University;
 import com.dealuni.demo.models.User;
 import com.dealuni.demo.repositories.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 //Ne spune ca e un service class
 @Service
@@ -16,16 +19,33 @@ public class UserService {
 
     //Constructor injection, we are injecting user repository inside the user service
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    public UserResponse registerNewUser(UserRequest userRequest) {
-        validateUser(userRequest);
-        User user = convertUserRequestToUserEntity(userRequest);
-        User savedUser = userRepository.save(user);
-        return convertUserEntityToUserResponse(savedUser);
+    public void registerNewUser(User user) {
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
+
+        if (user.getRoles() == null || user.getRoles().isEmpty()) {
+            user.setRoles(Set.of(Role.USER));
+        }
+
+        userRepository.save(user);
+    }
+
+    //cauta user-ul dupa username
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new NoSuchElementException("User not found"));
+    }
+
+    //verifica daca username-ul deja exista
+    public boolean existsByUsername(String username) {
+        return userRepository.findByUsername(username).isPresent();
     }
 
     //get all users
@@ -72,6 +92,11 @@ public class UserService {
     //delete user by id
     public void deleteUserById(Long id) {
         userRepository.deleteById(id);
+    }
+
+    public User findUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new NoSuchElementException("User not found"));
     }
 
     //metod overload
