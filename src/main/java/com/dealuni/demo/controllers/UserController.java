@@ -4,9 +4,9 @@ import com.dealuni.demo.dto.UserRequest;
 import com.dealuni.demo.dto.UserResponse;
 import com.dealuni.demo.services.UserService;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 //Ne spune ca e un controller
@@ -20,13 +20,6 @@ public class UserController {
 
     public UserController(UserService userService) {
         this.userService = userService;
-    }
-
-
-    @PostMapping
-    public ResponseEntity<UserResponse> registerNewUser(@Valid @RequestBody UserRequest userRequest) {
-        UserResponse userResponse = userService.registerNewUser(userRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(userResponse);
     }
 
     //get all users

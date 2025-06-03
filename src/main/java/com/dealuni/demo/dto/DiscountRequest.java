@@ -4,6 +4,7 @@ import com.dealuni.demo.models.Category;
 import com.dealuni.demo.models.City;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -30,14 +31,6 @@ public class DiscountRequest {
     @Max(value = 100, message = "Reducerea nu poate depăși 100%.")
     @Column(nullable = false)
     private Integer percentage;
-
-    /*
-    @Pattern(
-            regexp = "^[A-ZĂÂÎȘȚ][a-zăâîșțA-ZĂÂÎȘȚ\\- ]{1,49}$",
-            message = "Numele orașului trebuie să înceapă cu literă mare și să conțină doar litere, " +
-                    "spații sau cratimă."
-    )
-    */
 
     @NotNull(message = "Lista de orașe nu poate fi null.")
     @Size(min = 1, message = "Lista de orașe trebuie să conțină cel puțin un oraș.")
