@@ -5,6 +5,7 @@ import com.dealuni.demo.dto.CompanyResponse;
 import com.dealuni.demo.models.Company;
 import com.dealuni.demo.repositories.CompanyRepository;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;

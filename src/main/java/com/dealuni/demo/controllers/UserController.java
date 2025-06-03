@@ -4,9 +4,9 @@ import com.dealuni.demo.dto.UserRequest;
 import com.dealuni.demo.dto.UserResponse;
 import com.dealuni.demo.services.UserService;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 //Ne spune ca e un controller

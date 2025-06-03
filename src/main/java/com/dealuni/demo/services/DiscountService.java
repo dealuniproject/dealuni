@@ -6,6 +6,7 @@ import com.dealuni.demo.repositories.CompanyRepository;
 import com.dealuni.demo.repositories.DiscountRepository;
 import com.dealuni.demo.repositories.UserRepository;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;

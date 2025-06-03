@@ -61,7 +61,7 @@ public class AuthController {
         user.setUniversityName(University.valueOf(registerRequest.getUniversityName()));
 
         //dam roluri
-        if(registerRequest.getRoles() == null || registerRequest.getRoles().isEmpty()) {
+        if (registerRequest.getRoles() == null || registerRequest.getRoles().isEmpty()) {
             user.setRoles(Set.of(Role.USER));
         } else {
             user.setRoles(registerRequest.getRoles());

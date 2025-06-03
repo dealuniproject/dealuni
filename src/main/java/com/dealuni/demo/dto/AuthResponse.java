@@ -1,6 +1,7 @@
 package com.dealuni.demo.dto;
 
 import com.dealuni.demo.models.Role;
+
 import java.util.Set;
 
 public class AuthResponse {
