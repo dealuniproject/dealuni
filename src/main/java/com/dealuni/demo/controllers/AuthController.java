@@ -8,6 +8,7 @@ import com.dealuni.demo.repositories.UserRepository;
 import com.dealuni.demo.services.UserService;
 import com.dealuni.demo.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -131,5 +132,23 @@ public class AuthController {
                     .status(HttpStatus.UNAUTHORIZED)
                     .body("Username sau parolă incorectă.");
         }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+
+        ResponseCookie jwtCookie = ResponseCookie.from("jwt", "")
+                .httpOnly(true)
+                .secure(false) //CHANGE TO TRUE WHEN PUSHING TO PRODUCTION
+                .path("/")
+                .maxAge(0)
+                .sameSite("Strict")
+                .build();
+
+        SecurityContextHolder.clearContext();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                .body("You've logged out.");
     }
 }
