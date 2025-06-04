@@ -1,10 +1,11 @@
 package com.dealuni.demo.config;
 
-import com.dealuni.demo.filter.JwtAuthentificationFilter;
+import com.dealuni.demo.filter.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -20,12 +21,13 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
-    public final JwtAuthentificationFilter jwtAuthentificationFilter;
+    public final JwtAuthenticationFilter jwtAuthentificationFilter;
 
 
-    public SecurityConfig(JwtAuthentificationFilter jwtAuthentificationFilter) {
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthentificationFilter) {
         this.jwtAuthentificationFilter = jwtAuthentificationFilter;
     }
 
@@ -48,6 +50,8 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/api/discounts/**").permitAll()
+                        .requestMatchers("/api/companies/**").permitAll()
                         //orice alte request-uri, user-ul trebuie sa fie logat
                         .anyRequest().authenticated()
                 )

@@ -5,6 +5,7 @@ import com.dealuni.demo.dto.UserResponse;
 import com.dealuni.demo.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class UserController {
     }
 
     //get all users
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<UserResponse>> getAllUsers() {
         List<UserResponse> userResponseList = userService.getAllExistingUsers();
@@ -37,6 +39,7 @@ public class UserController {
     }
 
     //update user by id
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @PatchMapping("/{id}")
     public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @Valid @RequestBody UserRequest userRequest) {
         UserResponse userResponse = userService.updateUserById(id, userRequest);
@@ -44,6 +47,7 @@ public class UserController {
     }
 
     //delete user by id
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUserById(@PathVariable Long id) {
         userService.deleteUserById(id);

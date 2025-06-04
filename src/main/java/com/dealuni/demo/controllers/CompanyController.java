@@ -6,6 +6,7 @@ import com.dealuni.demo.services.CompanyService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class CompanyController {
         this.companyService = companyService;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<CompanyResponse> createNewCompany(@Valid @RequestBody CompanyRequest companyRequest) {
         CompanyResponse companyResponse = companyService.createNewCompany(companyRequest);
@@ -32,18 +34,21 @@ public class CompanyController {
         return ResponseEntity.ok(companyResponseList);
     }
 
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<CompanyResponse> getCompanyById(@PathVariable Long id) {
         CompanyResponse companyResponse = companyService.getCompanyById(id);
         return ResponseEntity.ok(companyResponse);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/{id}")
     public ResponseEntity<CompanyResponse> updateCompany(@PathVariable Long id, @Valid @RequestBody CompanyRequest companyRequest) {
         CompanyResponse companyResponse = companyService.updateCompanyById(id, companyRequest);
         return ResponseEntity.ok(companyResponse);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCompanyById(@PathVariable Long id) {
         companyService.deleteCompanyById(id);

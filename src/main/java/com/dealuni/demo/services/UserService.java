@@ -21,10 +21,12 @@ public class UserService {
     //Constructor injection, we are injecting user repository inside the user service
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationService authenticationService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationService authenticationService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationService = authenticationService;
     }
 
     public void registerNewUser(User user) {
@@ -39,7 +41,7 @@ public class UserService {
     }
 
     //cauta user-ul dupa username
-    public User findByUsername(String username) {
+    public User findUserByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new NoSuchElementException("User not found"));
     }
@@ -51,18 +53,21 @@ public class UserService {
 
     //get all users
     public List<UserResponse> getAllExistingUsers() {
+        User authenticateUser = authenticationService.authenticateMethods();
         List<User> allExistingUsers = userRepository.findAll();
         return convertUserEntityToUserResponse(allExistingUsers);
     }
 
     //get user by id
     public UserResponse getUserById(Long Id) {
+        User authenticateUser = authenticationService.authenticateMethods();
         User user = userRepository.findById(Id).orElseThrow(() -> new NoSuchElementException("User-ul nu a fost găsit."));
         return convertUserEntityToUserResponse(user);
     }
 
     //update user by id
     public UserResponse updateUserById(Long id, UserRequest userRequest) {
+        User authenticateUser = authenticationService.authenticateMethods();
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User-ul nu a fost găsit."));
 
@@ -92,12 +97,8 @@ public class UserService {
 
     //delete user by id
     public void deleteUserById(Long id) {
+        User authenticateUser = authenticationService.authenticateMethods();
         userRepository.deleteById(id);
-    }
-
-    public User findUserByUsername(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new NoSuchElementException("User not found"));
     }
 
     //metod overload
