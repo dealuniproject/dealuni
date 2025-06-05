@@ -9,10 +9,7 @@ import com.dealuni.demo.repositories.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.*;
 
 //Ne spune ca e un service class
 @Service
@@ -21,13 +18,16 @@ public class UserService {
     //Constructor injection, we are injecting user repository inside the user service
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, EmailService emailService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
     }
 
     public void registerNewUser(User user) {
+        // criptează parola
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
 
@@ -35,7 +35,22 @@ public class UserService {
             user.setRoles(Set.of(Role.USER));
         }
 
+        // generează cod de verificare
+        String verificationCode = generateVerificationCode();
+        user.setVerificationCode(verificationCode);
+
+        // setează contul ca dezactivat până la verificare
+        user.setVerified(false);
+
+        // salvează userul în baza de date
         userRepository.save(user);
+
+        // trimite email de verificare
+        emailService.sendVerificationEmail(user.getUsername(), verificationCode);
+    }
+
+    private String generateVerificationCode() {
+        return UUID.randomUUID().toString().substring(0, 6).toUpperCase();
     }
 
     //cauta user-ul dupa username

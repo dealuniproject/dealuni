@@ -46,6 +46,8 @@ public class User {
     @NotNull(message = "Numele universității este obligatoriu.")
     private University universityName;
 
+    private String verificationCode;
+
     private Boolean isVerified = false;
 
     private Boolean isBlocked = false;
@@ -105,6 +107,14 @@ public class User {
 
     public void setUniversityName(University universityName) {
         this.universityName = universityName;
+    }
+
+    public String getVerificationCode() {
+        return verificationCode;
+    }
+
+    public void setVerificationCode(String verificationCode) {
+        this.verificationCode = verificationCode;
     }
 
     public Boolean getVerified() {
