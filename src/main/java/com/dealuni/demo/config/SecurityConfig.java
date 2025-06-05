@@ -48,6 +48,7 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/verify").permitAll()
                         //orice alte request-uri, user-ul trebuie sa fie logat
                         .anyRequest().authenticated()
                 )

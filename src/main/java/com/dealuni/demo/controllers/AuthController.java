@@ -44,14 +44,12 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest) {
 
-        //verificam daca username-ul exista
         if (userService.existsByUsername(registerRequest.getUsername())) {
             return ResponseEntity
                     .status(HttpStatus.CONFLICT)
                     .body("Username already exists");
         }
 
-        //mapam AuthRequest la User Entity
         User user = new User();
         user.setUsername(registerRequest.getUsername());
         user.setPassword(registerRequest.getPassword());
@@ -59,20 +57,19 @@ public class AuthController {
         user.setLastName(registerRequest.getLastName());
         user.setUniversityName(University.valueOf(registerRequest.getUniversityName()));
 
-        //dam roluri
         if (registerRequest.getRoles() == null || registerRequest.getRoles().isEmpty()) {
             user.setRoles(Set.of(Role.USER));
         } else {
             user.setRoles(registerRequest.getRoles());
         }
 
-        //inregistram user-ul folosind UserService
+        // Înregistrează userul (cu cod verificare și status dezactivat)
         userService.registerNewUser(user);
 
-        //cream un obiect response
+        // Crează un răspuns simplu (poți să adaugi mesaj despre verificarea emailului)
         RegisterResponse response = new RegisterResponse(
                 user.getId(),
-                "User-ul s-a înregistrat cu succes.",
+                "User-ul s-a înregistrat cu succes. Verifică emailul pentru codul de confirmare.",
                 user.getUsername(),
                 user.getFirstName(),
                 user.getLastName(),
@@ -81,6 +78,28 @@ public class AuthController {
         );
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping("/verify")
+    public ResponseEntity<String> verifyUser(@RequestParam String email, @RequestParam String code) {
+        User user = userService.findUserByUsername(email);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utilizatorul nu a fost găsit.");
+        }
+
+        if (Boolean.TRUE.equals(user.getVerified())) {
+            return ResponseEntity.badRequest().body("Utilizatorul este deja verificat.");
+        }
+
+        if (user.getVerificationCode().equalsIgnoreCase(code)) {
+            user.setVerified(true);
+            user.setVerificationCode(null);
+            userRepository.save(user);
+            return ResponseEntity.ok("Contul a fost verificat cu succes!");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Codul de verificare este incorect.");
+        }
     }
 
     @PostMapping("/login")
