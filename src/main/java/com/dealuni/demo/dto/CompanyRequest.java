@@ -4,11 +4,11 @@ import jakarta.persistence.Column;
 import jakarta.validation.constraints.Pattern;
 
 public class CompanyRequest {
-    @Pattern(regexp = "^[\\p{L}0-9][\\p{L}0-9\\-\\.\\&\\,\\(\\) ]{2,99}$", message = "Numele companiei trebuie să înceapă cu literă sau cifră și poate conține doar litere, cifre, " + "cratimă, punct, virgulă, & sau paranteze.")
+    @Pattern(regexp = "^[\\p{L}\\p{N}\\p{P}\\p{Zs}]{2,100}$", message = "Numele companiei trebuie să înceapă cu literă sau cifră și poate conține doar litere, cifre, " + "cratimă, punct, virgulă, & sau paranteze.")
     @Column(nullable = false, length = 100)
     private String name;
 
-    @Pattern(regexp = "^[\\p{L}0-9.,!?%:;\"'()\\-\\/\\s]{10,600}$", message = "Descrierea trebuie să conțină între 10 și 600 de caractere și poate include litere, cifre, " + "spații și semne de punctuație uzuale.")
+    @Pattern(regexp = "^[\\p{L}\\p{N}\\p{P}\\p{Zs}]{10,600}$", message = "Descrierea trebuie să conțină între 10 și 600 de caractere și poate include litere, cifre, " + "spații și semne de punctuație uzuale.")
     @Column(length = 600)
     private String description;
 

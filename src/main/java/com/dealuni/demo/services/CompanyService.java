@@ -106,7 +106,7 @@ public class CompanyService {
             throw new IllegalArgumentException("Numele companiei nu poate depăși 100 de caractere.");
         }
 
-        String regex = "^[\\p{L}0-9][\\p{L}0-9\\-\\.\\&\\,\\(\\) ]{2,99}$";
+        String regex = "^[\\p{L}\\p{N}\\p{P}\\p{Zs}]{2,100}$";
 
         if (!companyRequest.getName().matches(regex)) {
             throw new IllegalArgumentException("Numele companiei trebuie să înceapă cu literă sau cifră și poate conține doar litere, cifre, cratimă, punct, virgulă, & sau paranteze.");
@@ -120,7 +120,7 @@ public class CompanyService {
             throw new IllegalArgumentException("Descrierea companiei nu poate depăși 600 de caractere.");
         }
 
-        if (!companyRequest.getDescription().matches("^[\\p{L}0-9][\\p{L}0-9\\-\\.\\&\\,\\(\\) ]{2,99}$")) {
+        if (!companyRequest.getDescription().matches("^^[\\p{L}\\p{N}\\p{P}\\p{Zs}]{10,600}$")) {
             throw new IllegalArgumentException("Descrierea trebuie să conțină între 10 și 600 de caractere și poate include litere, cifre, spații și semne de punctuație uzuale.");
         }
 
