@@ -1,6 +1,5 @@
 package com.dealuni.demo.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -19,8 +18,7 @@ public class EmailService {
         message.setTo(toEmail);
         message.setSubject("Verificare cont - uniDeal");
 
-        String text = "Salut!\n\nTe rugăm să verifici contul tău folosind acest cod:\n\n"
-                + verificationCode + "\n\nMulțumim,\nEchipa uniDeal";
+        String text = "Salut!\n\nTe rugăm să verifici contul tău folosind acest cod:\n\n" + verificationCode + "\n\nMulțumim,\nEchipa uniDeal";
 
         message.setText(text);
         message.setFrom("unidealapp@gmail.com");  // aceeași ca în properties

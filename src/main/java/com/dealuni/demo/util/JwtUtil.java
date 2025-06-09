@@ -32,9 +32,7 @@ public class JwtUtil {
 
     //generam token
     public String generateToken(UserDetails userDetails) {
-        return Jwts.builder().setSubject(userDetails.getUsername()).setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + jwsExpirationMs))
-                .signWith(getSignInKey(), SignatureAlgorithm.HS256).compact();
+        return Jwts.builder().setSubject(userDetails.getUsername()).setIssuedAt(new Date()).setExpiration(new Date(System.currentTimeMillis() + jwsExpirationMs)).signWith(getSignInKey(), SignatureAlgorithm.HS256).compact();
     }
 
     //validam token
@@ -61,10 +59,6 @@ public class JwtUtil {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(getSignInKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        return Jwts.parserBuilder().setSigningKey(getSignInKey()).build().parseClaimsJws(token).getBody();
     }
 }

@@ -3,7 +3,10 @@ package com.dealuni.demo.services;
 import com.dealuni.demo.dto.CompanyRequest;
 import com.dealuni.demo.dto.CompanyResponse;
 import com.dealuni.demo.models.Company;
+import com.dealuni.demo.models.Discount;
 import com.dealuni.demo.repositories.CompanyRepository;
+import com.dealuni.demo.repositories.DiscountRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -14,9 +17,11 @@ import java.util.NoSuchElementException;
 public class CompanyService {
 
     private final CompanyRepository companyRepository;
+    private final DiscountRepository discountRepository;
 
-    public CompanyService(CompanyRepository companyRepository) {
+    public CompanyService(CompanyRepository companyRepository, DiscountRepository discountRepository) {
         this.companyRepository = companyRepository;
+        this.discountRepository = discountRepository;
     }
 
     public CompanyResponse createNewCompany(CompanyRequest companyRequest) {
@@ -36,9 +41,15 @@ public class CompanyService {
         return convertCompanyEntityToCompanyResponse(company);
     }
 
+    public CompanyResponse getCompanyByDiscountId(Long discountId) {
+        Discount discount = discountRepository.findById(discountId)
+                .orElseThrow(() -> new EntityNotFoundException("Discount inexistent."));
+        Company company = discount.getCompany();
+        return convertCompanyEntityToCompanyResponse(company);
+    }
+
     public CompanyResponse updateCompanyById(Long id, CompanyRequest companyRequest) {
-        Company existingCompany = companyRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Compania nu a fost găsită."));
+        Company existingCompany = companyRepository.findById(id).orElseThrow(() -> new RuntimeException("Compania nu a fost găsită."));
 
         if (companyRequest.getName() != null) {
             existingCompany.setName(companyRequest.getName());
@@ -95,21 +106,21 @@ public class CompanyService {
             throw new IllegalArgumentException("Numele companiei nu poate depăși 100 de caractere.");
         }
 
-        String regex = "^[A-ZĂÂÎȘȚ0-9][a-zăâîșțA-ZĂÂÎȘȚ0-9\\-\\.\\&\\,\\(\\) ]{1,99}$";
+        String regex = "^[\\p{L}0-9][\\p{L}0-9\\-\\.\\&\\,\\(\\) ]{2,99}$";
 
         if (!companyRequest.getName().matches(regex)) {
             throw new IllegalArgumentException("Numele companiei trebuie să înceapă cu literă sau cifră și poate conține doar litere, cifre, cratimă, punct, virgulă, & sau paranteze.");
         }
 
         if (companyRequest.getDescription() == null || companyRequest.getDescription().trim().isEmpty()) {
-            throw new IllegalArgumentException("Descrierea companiei nu poate fi null.");
+            throw new IllegalArgumentException("Descrierea companiei este obligatorie.");
         }
 
         if (companyRequest.getDescription().length() > 600) {
             throw new IllegalArgumentException("Descrierea companiei nu poate depăși 600 de caractere.");
         }
 
-        if (!companyRequest.getDescription().matches("^[\\p{L}0-9.,!?%:;\"'()\\-\\/\\s]{10,600}$")) {
+        if (!companyRequest.getDescription().matches("^[\\p{L}0-9][\\p{L}0-9\\-\\.\\&\\,\\(\\) ]{2,99}$")) {
             throw new IllegalArgumentException("Descrierea trebuie să conțină între 10 și 600 de caractere și poate include litere, cifre, spații și semne de punctuație uzuale.");
         }
 

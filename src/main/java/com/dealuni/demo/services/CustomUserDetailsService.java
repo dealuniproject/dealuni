@@ -1,5 +1,6 @@
 package com.dealuni.demo.services;
 
+import com.dealuni.demo.models.CustomUserDetails;
 import com.dealuni.demo.models.User;
 import com.dealuni.demo.repositories.UserRepository;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,20 +24,11 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        return new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
-                user.getPassword(),
-                getAuthorities(user)
-        );
-    }
+        // AICI definim authorities
+        Collection<? extends GrantedAuthority> authorities = user.getRoles().stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role.name())).collect(Collectors.toList());
 
-
-    private Collection<? extends GrantedAuthority> getAuthorities(User user) {
-
-        return user.getRoles().stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
-                .collect(Collectors.toList());
+        return new CustomUserDetails(user, authorities);
     }
 }

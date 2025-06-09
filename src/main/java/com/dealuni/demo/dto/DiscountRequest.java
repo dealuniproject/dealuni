@@ -10,20 +10,12 @@ import java.util.Set;
 
 public class DiscountRequest {
 
-    @Pattern(
-            regexp = "^[\\p{L}0-9 .,!%&()\\-]{3,150}$",
-            message = "Titlul discountului trebuie să conțină între 3 și 150 de caractere: litere, cifre, " +
-                    "spații și simboluri uzuale."
-    )
+    @Pattern(regexp = "^[\\p{L}\\p{N}\\p{P}\\p{Zs}]{3,150}$", message = "Titlul discountului trebuie să conțină între 3 și 150 de caractere: litere, cifre, spații și simboluri uzuale.")
     @Column(length = 150)
-    @NotNull(message = "Titlul discountului nu poate fi null.")
+    @NotNull(message = "Titlul discountului nu poate fi gol.")
     private String title;
 
-    @Pattern(
-            regexp = "^[\\p{L}0-9.,!?%:;\"'()\\-\\/\\s]{10,600}$",
-            message = "Descrierea trebuie să conțină între 10 și 600 de caractere și poate include litere, cifre, " +
-                    "spații și semne de punctuație uzuale."
-    )
+    @Pattern(regexp = "^[\\p{L}\\p{N}\\p{P}\\p{Zs}]{10,600}$", message = "Descrierea trebuie să conțină între 10 și 600 de caractere și poate include litere, cifre, spații și semne de punctuație uzuale.")
     @Column(length = 600)
     private String description;
 
@@ -32,17 +24,14 @@ public class DiscountRequest {
     @Column(nullable = false)
     private Integer percentage;
 
-    @NotNull(message = "Lista de orașe nu poate fi null.")
+    @NotNull(message = "Lista de orașe nu poate fi goală.")
     @Size(min = 1, message = "Lista de orașe trebuie să conțină cel puțin un oraș.")
     //discount-ul poate sa aiba unul sau mai multe orase
     //orasele se salveaza intr-un table pentru orase
     @ElementCollection(fetch = FetchType.EAGER)
     //un oras se salveaza ca un string
     @Enumerated(EnumType.STRING)
-    @CollectionTable(
-            name = "cities",
-            joinColumns = @JoinColumn(name = "discount_id")
-    )
+    @CollectionTable(name = "cities", joinColumns = @JoinColumn(name = "discount_id"))
     @Column(name = "city_enum")
     private Set<City> cities;
 
