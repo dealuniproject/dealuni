@@ -25,12 +25,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleGeneral(Exception ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred.");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("A apărut o eroare neașteptată.");
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<String> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
-        return new ResponseEntity<>("Data integrity violation error : " + ex.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("Eroare de încălcare a integrității datelor: " + ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(UnauthorizedException.class)
@@ -40,6 +40,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({AccessDeniedException.class, AuthorizationDeniedException.class})
     public ResponseEntity<String> handleAccessDeniedException(Exception ex) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized.");
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Neautorizat.");
     }
 }

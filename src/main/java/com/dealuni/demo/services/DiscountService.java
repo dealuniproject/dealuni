@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 public class DiscountService {
@@ -26,10 +27,8 @@ public class DiscountService {
     }
 
     public DiscountResponse createNewDiscount(DiscountRequest discountRequest, Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NoSuchElementException("User-ul nu a fost găsit."));
-        Company company = companyRepository.findById(discountRequest.getCompany())
-                .orElseThrow(() -> new NoSuchElementException("Compania nu a fost găsită."));
+        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User-ul nu a fost găsit."));
+        Company company = companyRepository.findById(discountRequest.getCompany()).orElseThrow(() -> new NoSuchElementException("Compania nu a fost găsită."));
         validateDiscount(discountRequest);
         Discount discount = convertDiscountRequestToDiscountEntity(discountRequest);
         discount.setCompany(company);
@@ -48,9 +47,45 @@ public class DiscountService {
         return convertDiscountEntityToDiscountResponse(discount);
     }
 
+    public List<DiscountResponse> getDiscountsByCityAndCategory(City city, Category category) {
+        List<Discount> discounts = discountRepository.findByCityAndCategory(city, category);
+        return convertDiscountEntityToDiscountResponse(discounts);
+    }
+
+    public List<DiscountResponse> searchDiscounts(String name, Integer minPercentage, Integer maxPercentage, City city, Category category, LocalDate maxValidUntil) {
+
+        List<Discount> discounts = discountRepository.findAll();
+
+        if (name != null && !name.trim().isEmpty()) {
+            discounts = discounts.stream().filter(d -> d.getTitle().toLowerCase().contains(name.toLowerCase())).collect(Collectors.toList());
+        }
+
+        if (minPercentage != null) {
+            discounts = discounts.stream().filter(d -> d.getPercentage() >= minPercentage).collect(Collectors.toList());
+        }
+
+        if (maxPercentage != null) {
+            discounts = discounts.stream().filter(d -> d.getPercentage() <= maxPercentage).collect(Collectors.toList());
+        }
+
+        if (city != null) {
+            discounts = discounts.stream().filter(d -> d.getCities() != null && d.getCities().contains(city)).collect(Collectors.toList());
+        }
+
+        if (category != null) {
+            discounts = discounts.stream().filter(d -> category.equals(d.getCategory())).collect(Collectors.toList());
+        }
+
+        if (maxValidUntil != null) {
+            discounts = discounts.stream().filter(d -> d.getValidUntil() != null && !d.getValidUntil().isAfter(maxValidUntil)).collect(Collectors.toList());
+        }
+
+        return convertDiscountEntityToDiscountResponse(discounts);
+    }
+
+
     public DiscountResponse updateDiscountById(Long id, DiscountRequest discountRequest) {
-        Discount existingDiscount = discountRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Discount-ul nu a fost găsit."));
+        Discount existingDiscount = discountRepository.findById(id).orElseThrow(() -> new RuntimeException("Discount-ul nu a fost găsit."));
 
         if (discountRequest.getTitle() != null) {
             existingDiscount.setTitle(discountRequest.getTitle());
@@ -140,7 +175,7 @@ public class DiscountService {
             throw new IllegalArgumentException("Numele discount-ului nu poate depăși 150 de caractere.");
         }
 
-        String regex = "^[\\p{L}0-9 .,!%&()\\-]{3,150}$";
+        String regex = "^[\\p{L}\\p{N}\\p{P}\\p{Zs}]{3,150}$";
 
         if (!discountRequest.getTitle().matches(regex)) {
             throw new IllegalArgumentException("Titlul discountului trebuie să conțină între 3 și 150 de caractere: litere, cifre, spații și simboluri uzuale.");
@@ -154,7 +189,7 @@ public class DiscountService {
             throw new IllegalArgumentException("Descrierea discount-ului nu poate depăși 600 de caractere.");
         }
 
-        if (!discountRequest.getDescription().matches("^[\\p{L}0-9.,!?%:;\"'()\\-\\/\\s]{10,600}$")) {
+        if (!discountRequest.getDescription().matches("^[\\p{L}\\p{N}\\p{P}\\p{Zs}]{10,600}$")) {
             throw new IllegalArgumentException("Descrierea trebuie să conțină între 10 și 600 de caractere și poate include litere, cifre, spații și semne de punctuație uzuale.");
         }
 

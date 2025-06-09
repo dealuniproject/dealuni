@@ -12,21 +12,13 @@ public class Company {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Pattern(
-            regexp = "^[A-ZĂÂÎȘȚ0-9][a-zăâîșțA-ZĂÂÎȘȚ0-9\\-\\.\\&\\,\\(\\) ]{1,99}$",
-            message = "Numele companiei trebuie să înceapă cu literă sau cifră și poate conține doar litere, cifre, " +
-                    "cratimă, punct, virgulă, & sau paranteze."
-    )
+    @Pattern(regexp = "^[\\p{L}0-9][\\p{L}0-9\\-\\.\\&\\,\\(\\) ]{2,99}$", message = "Numele companiei trebuie să înceapă cu literă sau cifră și poate conține doar litere, cifre, cratimă, punct, virgulă, & sau paranteze.")
     @Column(nullable = false, length = 100)
     @NotNull(message = "Numele companiei este obligatoriu.")
     private String name;
 
 
-    @Pattern(
-            regexp = "^[\\p{L}0-9.,!?%:;\"'()\\-\\/\\s]{10,600}$",
-            message = "Descrierea trebuie să conțină între 10 și 600 de caractere și poate include litere, cifre, " +
-                    "spații și semne de punctuație uzuale."
-    )
+    @Pattern(regexp = "^[\\p{L}0-9.,!?%:;\"'()\\-\\/\\s]{10,600}$", message = "Descrierea trebuie să conțină între 10 și 600 de caractere și poate include litere, cifre, spații și semne de punctuație uzuale.")
     @Column(length = 600)
     @NotNull(message = "Descrierea este obligatorie.")
     private String description;

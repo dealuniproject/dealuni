@@ -22,14 +22,14 @@ import java.io.IOException;
 
 
 @Component
-public class JwtAuthentificationFilter extends OncePerRequestFilter {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsService userDetailsService;
 
-    private static final Logger logger = LoggerFactory.getLogger(JwtAuthentificationFilter.class);
+    private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
-    public JwtAuthentificationFilter(JwtUtil jwtUtil, CustomUserDetailsService userDetailsService) {
+    public JwtAuthenticationFilter(JwtUtil jwtUtil, CustomUserDetailsService userDetailsService) {
         this.jwtUtil = jwtUtil;
         this.userDetailsService = userDetailsService;
     }
@@ -38,11 +38,19 @@ public class JwtAuthentificationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
+        String path = request.getRequestURI();
+
+
+        if (path.startsWith("/auth") && !path.equals("/auth/check")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String jwt = null;
 
         //incercam sa obtinem jwt din Authorization Header
         String headerToken = request.getHeader("Authorization");
-        if (StringUtils.hasText(headerToken) && headerToken.startsWith("Bearer")) {
+        if (StringUtils.hasText(headerToken) && headerToken.startsWith("Bearer ")) {
             jwt = headerToken.substring(7);
         }
 
@@ -69,9 +77,7 @@ public class JwtAuthentificationFilter extends OncePerRequestFilter {
 
                 //validam token si cream o autentificare valida daca token-ul este valid
                 if (jwtUtil.validateToken(jwt, userDetails)) {
-                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                            userDetails, null, userDetails.getAuthorities()
-                    );
+                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
                     //adaugam request details pentru extra securitate
                     authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -80,7 +86,7 @@ public class JwtAuthentificationFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                 }
             } catch (JwtException e) {
-                logger.error("JWT validation failed", e);
+                logger.error("Validarea JWT a eșuat.", e);
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }

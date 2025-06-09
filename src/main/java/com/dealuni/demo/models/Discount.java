@@ -15,20 +15,12 @@ public class Discount {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Pattern(
-            regexp = "^[\\p{L}0-9 .,!%&()\\-]{3,150}$",
-            message = "Titlul discountului trebuie să conțină între 3 și 150 de caractere: litere, cifre, " +
-                    "spații și simboluri uzuale."
-    )
+    @Pattern(regexp = "^[\\p{L}\\p{N}\\p{P}\\p{Zs}]{3,150}$", message = "Titlul discountului trebuie să conțină între 3 și 150 de caractere: litere, cifre, spații și simboluri uzuale.")
     @Column(length = 150)
     @NotNull(message = "Titlul discountului nu poate fi null.")
     private String title;
 
-    @Pattern(
-            regexp = "^[\\p{L}0-9.,!?%:;\"'()\\-\\/\\s]{10,600}$",
-            message = "Descrierea trebuie să conțină între 10 și 600 de caractere și poate include litere, cifre, " +
-                    "spații și semne de punctuație uzuale."
-    )
+    @Pattern(regexp = "^[\\p{L}\\p{N}\\p{P}\\p{Zs}]{10,600}$", message = "Descrierea trebuie să conțină între 10 și 600 de caractere și poate include litere, cifre, spații și semne de punctuație uzuale.")
     @Column(length = 600)
     private String description;
 
@@ -44,10 +36,7 @@ public class Discount {
     @ElementCollection(fetch = FetchType.EAGER)
     //un oras se salveaza ca un string
     @Enumerated(EnumType.STRING)
-    @CollectionTable(
-            name = "cities",
-            joinColumns = @JoinColumn(name = "discount_id")
-    )
+    @CollectionTable(name = "cities", joinColumns = @JoinColumn(name = "discount_id"))
     @Column(name = "city_enum")
     private Set<City> cities;
 
@@ -72,14 +61,14 @@ public class Discount {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "created_by", referencedColumnName = "id", nullable = false)
-    @NotNull(message = "Creatorul discountului nu poate fi null.")
+    @NotNull(message = "Creatorul discountului e obligatoriu.")
     private User createdBy;
 
     //un discount poate sa fie numai de la o companie, o companie poate sa aibe multe discounturi
     @ManyToOne(fetch = FetchType.EAGER)
     //company_id este foreign key, face referinta la id din modelul Company
     @JoinColumn(name = "company_id", referencedColumnName = "id")
-    @NotNull(message = "ID-ul companiei nu poate fi null.")
+    @NotNull(message = "ID-ul companiei este obligatoriu.")
     private Company company;
 
     public Long getId() {

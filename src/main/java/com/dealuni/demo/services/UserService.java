@@ -55,8 +55,7 @@ public class UserService {
 
     //cauta user-ul dupa username
     public User findByUsername(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new NoSuchElementException("User not found"));
+        return userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("User not found"));
     }
 
     //verifica daca username-ul deja exista
@@ -78,8 +77,7 @@ public class UserService {
 
     //update user by id
     public UserResponse updateUserById(Long id, UserRequest userRequest) {
-        User existingUser = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User-ul nu a fost găsit."));
+        User existingUser = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User-ul nu a fost găsit."));
 
         //daca exista un firstname in request, ii dau userului existent un alt firstname
         if (userRequest.getFirstName() != null) {
@@ -111,8 +109,7 @@ public class UserService {
     }
 
     public User findUserByUsername(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new NoSuchElementException("User not found"));
+        return userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("User not found"));
     }
 
     //metod overload

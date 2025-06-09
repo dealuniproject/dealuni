@@ -1,10 +1,11 @@
 package com.dealuni.demo.config;
 
-import com.dealuni.demo.filter.JwtAuthentificationFilter;
+import com.dealuni.demo.filter.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -16,20 +17,21 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
-    public final JwtAuthentificationFilter jwtAuthentificationFilter;
+    public final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-
-    public SecurityConfig(JwtAuthentificationFilter jwtAuthentificationFilter) {
-        this.jwtAuthentificationFilter = jwtAuthentificationFilter;
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
-    //cream AuthentificationManager care este "boss-ul" procesului de autentificare
+    //cream AuthenticationManager care este "boss-ul" procesului de autentificare
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
@@ -44,20 +46,13 @@ public class SecurityConfig {
                 //CSRF, dezactivat in dev
                 .csrf(csrf -> csrf.disable())
                 //definim regulile URL
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/verify").permitAll()
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/admin/**").hasRole("ADMIN").requestMatchers("/user/**").hasAnyRole("USER", "ADMIN").requestMatchers("/auth/**").permitAll().requestMatchers("/api/discounts/**").permitAll().requestMatchers("/api/companies/**").permitAll()
                         //orice alte request-uri, user-ul trebuie sa fie logat
-                        .anyRequest().authenticated()
-                )
+                        .anyRequest().authenticated())
                 //dezactivam sesiunea din cauza ca jwt nu are state
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 //adaugam filtru jwt inainte de filtrul standart
-                .addFilterBefore(jwtAuthentificationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
@@ -65,16 +60,15 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Cookie"));
 
-        //permitem request-uri doar pentru viitorul nostru client react
-        configuration.setAllowedOrigins(List.of("http://localhost:8080"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
-        configuration.setExposedHeaders(List.of("Set-Cookie"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
+
         return source;
     }
 

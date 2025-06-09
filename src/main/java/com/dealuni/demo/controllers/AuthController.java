@@ -45,9 +45,7 @@ public class AuthController {
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest) {
 
         if (userService.existsByUsername(registerRequest.getUsername())) {
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body("Username already exists");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Username-ul deja există.");
         }
 
         User user = new User();
@@ -67,15 +65,7 @@ public class AuthController {
         userService.registerNewUser(user);
 
         // Crează un răspuns simplu (poți să adaugi mesaj despre verificarea emailului)
-        RegisterResponse response = new RegisterResponse(
-                user.getId(),
-                "User-ul s-a înregistrat cu succes. Verifică emailul pentru codul de confirmare.",
-                user.getUsername(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getUniversityName().name(),
-                user.getRoles()
-        );
+        RegisterResponse response = new RegisterResponse(user.getId(), "User-ul s-a înregistrat cu succes. Verifică emailul pentru codul de confirmare.", user.getUsername(), user.getFirstName(), user.getLastName(), user.getUniversityName().name(), user.getRoles());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -96,7 +86,7 @@ public class AuthController {
             user.setVerified(true);
             user.setVerificationCode(null);
             userRepository.save(user);
-            return ResponseEntity.ok("Contul a fost verificat cu succes!");
+            return ResponseEntity.ok("Contul a fost verificat cu succes.");
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Codul de verificare este incorect.");
         }
@@ -108,12 +98,7 @@ public class AuthController {
         try {
 
             //autetinficam user-ul
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            authRequest.getUsername(),
-                            authRequest.getPassword()
-                    )
-            );
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
 
             //facem autentificarea securizata
             SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -124,8 +109,7 @@ public class AuthController {
             //generam JWT token
 
             String jwt = jwtUtil.generateToken(userDetails);
-            ResponseCookie jwtCookie = ResponseCookie.from("jwt", jwt)
-                    .httpOnly(true) //nu permite la JavaScript sa ia cookie
+            ResponseCookie jwtCookie = ResponseCookie.from("jwt", jwt).httpOnly(true) //nu permite la JavaScript sa ia cookie
                     .secure(false) //IMPORTANT SA SCHIMBAM LA PRODUCTION IN TRUE
                     .path("/") //cookies sunt disponibili in toata aplicatia
                     .maxAge(10 * 60 * 60) // valida pentru 10h
@@ -133,57 +117,38 @@ public class AuthController {
                     .build();
 
             //cream obiect response
-            AuthResponse authResponse = new AuthResponse(
-                    "Autentificare cu succes.",
-                    userDetails.getUsername(),
-                    userService.findUserByUsername(userDetails.getUsername()).getRoles()
-            );
+            AuthResponse authResponse = new AuthResponse("Autentificare cu succes.", userDetails.getUsername(), userService.findUserByUsername(userDetails.getUsername()).getRoles());
 
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-                    .body(authResponse);
+            return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).body(authResponse);
 
             //returnam response cu cookie-header si body
         } catch (AuthenticationException e) {
-            return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .body("Username sau parolă incorectă.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Username sau parolă incorectă.");
         }
     }
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
 
-        ResponseCookie jwtCookie = ResponseCookie.from("jwt", "")
-                .httpOnly(true)
-                .secure(false) //CHANGE TO TRUE WHEN PUSHING TO PRODUCTION
-                .path("/")
-                .maxAge(0)
-                .sameSite("Strict")
-                .build();
+        ResponseCookie jwtCookie = ResponseCookie.from("jwt", "").httpOnly(true).secure(false) //CHANGE TO TRUE WHEN PUSHING TO PRODUCTION
+                .path("/").maxAge(0).sameSite("Strict").build();
 
         SecurityContextHolder.clearContext();
 
-        return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-                .body("Te-ai deconectat.");
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).body("Te-ai deconectat.");
     }
 
     @GetMapping("/check")
     public ResponseEntity<?> checkAuthentication() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication == null || !authentication.isAuthenticated()  || authentication instanceof AnonymousAuthenticationToken) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Nu este autentificat!");
+        if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Nu ești autentificat!");
         }
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         User user = userService.findUserByUsername(userDetails.getUsername());
 
-        return ResponseEntity.ok(new AuthResponse(
-                "Autentificat",
-                user.getUsername(),
-                user.getRoles()
-        ));
+        return ResponseEntity.ok(new AuthResponse("Autentificat", user.getUsername(), user.getRoles()));
     }
 }

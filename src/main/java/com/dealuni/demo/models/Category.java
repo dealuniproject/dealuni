@@ -5,7 +5,7 @@ public enum Category {
     HEALTH,
     ENTERTAINMENT,
     CLOTHING_BEAUTY,
-    BOOKS,
+    EDUCATION,
     INTERNET_MOBILE,
     COMPUTERS_GADGETS,
     TRAVEL,
