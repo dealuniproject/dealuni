@@ -46,7 +46,12 @@ public class SecurityConfig {
                 //CSRF, dezactivat in dev
                 .csrf(csrf -> csrf.disable())
                 //definim regulile URL
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/admin/**").hasRole("ADMIN").requestMatchers("/user/**").hasAnyRole("USER", "ADMIN").requestMatchers("/auth/**").permitAll().requestMatchers("/api/discounts/**").permitAll().requestMatchers("/api/companies/**").permitAll()
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/api/discounts/**").permitAll()
+                        .requestMatchers("/api/companies/**").permitAll()
                         //orice alte request-uri, user-ul trebuie sa fie logat
                         .anyRequest().authenticated())
                 //dezactivam sesiunea din cauza ca jwt nu are state

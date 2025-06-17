@@ -14,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -117,7 +118,14 @@ public class AuthController {
                     .build();
 
             //cream obiect response
-            AuthResponse authResponse = new AuthResponse("Autentificare cu succes.", userDetails.getUsername(), userService.findUserByUsername(userDetails.getUsername()).getRoles());
+            User user = userService.findUserByUsername(userDetails.getUsername());
+
+            AuthResponse authResponse = new AuthResponse(
+                    "Autentificare cu succes.",
+                    user.getId(),
+                    user.getUsername(),
+                    user.getRoles()
+            );
 
             return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).body(authResponse);
 
@@ -143,12 +151,13 @@ public class AuthController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Nu ești autentificat!");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Nu ești autentificat.");
         }
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         User user = userService.findUserByUsername(userDetails.getUsername());
 
-        return ResponseEntity.ok(new AuthResponse("Autentificat", user.getUsername(), user.getRoles()));
+        return ResponseEntity.ok(new AuthResponse("Autentificat.", user.getId(), user.getUsername(), user.getRoles()));
     }
+
 }

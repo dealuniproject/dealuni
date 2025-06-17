@@ -1,5 +1,7 @@
 package com.dealuni.demo.controllers;
 
+import com.dealuni.demo.dto.ChangePasswordRequest;
+import com.dealuni.demo.dto.ChangePasswordResponse;
 import com.dealuni.demo.dto.UserRequest;
 import com.dealuni.demo.dto.UserResponse;
 import com.dealuni.demo.models.CustomUserDetails;
@@ -8,7 +10,10 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -69,6 +74,27 @@ public class UserController {
 
         userService.deleteUserById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    @PostMapping("/change-password")
+    public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ChangePasswordResponse("Nu ești autentificat."));
+        }
+
+        String username = authentication.getName();
+
+        try {
+            userService.changePassword(username, request.getCurrentPassword(), request.getNewPassword());
+            return ResponseEntity.ok(new ChangePasswordResponse("Parola a fost schimbată cu succes."));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ChangePasswordResponse(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ChangePasswordResponse("A apărut o eroare."));
+        }
     }
 
 }
