@@ -1,5 +1,6 @@
 package com.dealuni.demo.models;
 
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -7,6 +8,7 @@ import java.util.Collection;
 
 public class CustomUserDetails implements UserDetails {
 
+    @Getter
     private final User user;
     private final Collection<? extends GrantedAuthority> authorities;
 
@@ -54,7 +56,7 @@ public class CustomUserDetails implements UserDetails {
         return user.getId();
     }
 
-    public User getUser() {
-        return user;
+    public boolean isVerified() {
+        return Boolean.TRUE.equals(user.getVerified());
     }
 }

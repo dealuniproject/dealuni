@@ -4,8 +4,10 @@ import com.dealuni.demo.dto.DiscountRequest;
 import com.dealuni.demo.dto.DiscountResponse;
 import com.dealuni.demo.models.Category;
 import com.dealuni.demo.models.City;
+import com.dealuni.demo.models.CustomUserDetails;
 import com.dealuni.demo.services.DiscountService;
 import jakarta.validation.Valid;
+import org.springframework.security.core.Authentication;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -39,9 +42,12 @@ public class DiscountController {
         return ResponseEntity.ok(discountResponseList);
     }
 
-    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @GetMapping("/{id}")
-    public ResponseEntity<DiscountResponse> getDiscountById(@PathVariable Long id) {
+    public ResponseEntity<DiscountResponse> getDiscountById(@PathVariable Long id, Authentication authentication) {
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        if (!userDetails.isVerified()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         DiscountResponse discountResponse = discountService.getDiscountById(id);
         return ResponseEntity.ok(discountResponse);
     }

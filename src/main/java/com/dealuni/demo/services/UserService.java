@@ -6,6 +6,7 @@ import com.dealuni.demo.models.Role;
 import com.dealuni.demo.models.University;
 import com.dealuni.demo.models.User;
 import com.dealuni.demo.repositories.UserRepository;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -55,7 +56,7 @@ public class UserService {
 
     //cauta user-ul dupa username
     public User findByUsername(String username) {
-        return userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("User not found"));
+        return userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("Utilizatorul nu a fost găsit."));
     }
 
     //verifica daca username-ul deja exista
@@ -71,13 +72,13 @@ public class UserService {
 
     //get user by id
     public UserResponse getUserById(Long Id) {
-        User user = userRepository.findById(Id).orElseThrow(() -> new NoSuchElementException("User-ul nu a fost găsit."));
+        User user = userRepository.findById(Id).orElseThrow(() -> new NoSuchElementException("Utilizatorul nu a fost găsit."));
         return convertUserEntityToUserResponse(user);
     }
 
     //update user by id
     public UserResponse updateUserById(Long id, UserRequest userRequest) {
-        User existingUser = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User-ul nu a fost găsit."));
+        User existingUser = userRepository.findById(id).orElseThrow(() -> new RuntimeException("Utilizatorul nu a fost găsit."));
 
         //daca exista un firstname in request, ii dau userului existent un alt firstname
         if (userRequest.getFirstName() != null) {
@@ -109,7 +110,23 @@ public class UserService {
     }
 
     public User findUserByUsername(String username) {
-        return userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("User not found"));
+        return userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("Utilizatorul nu a fost găsit."));
+    }
+
+    public void changePassword(String username, String currentPassword, String newPassword) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Utilizatorul nu a fost găsit."));
+
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new IllegalArgumentException("Parola curentă este incorectă.");
+        }
+
+        if (!newPassword.matches("^(?=.*[A-Z]).{8,}$")) {
+            throw new IllegalArgumentException("Parola nouă trebuie să aibă cel puțin 8 caractere și să conțină cel puțin o literă mare.");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
 
     //metod overload
