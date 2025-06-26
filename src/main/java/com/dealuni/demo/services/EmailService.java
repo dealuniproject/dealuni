@@ -21,7 +21,7 @@ public class EmailService {
         String text = "Salut!\n\nTe rugăm să verifici contul tău folosind acest cod:\n\n" + verificationCode + "\n\nMulțumim,\nEchipa uniDeal";
 
         message.setText(text);
-        message.setFrom("unidealapp@gmail.com");  // aceeași ca în properties
+        message.setFrom("unidealapp@gmail.com");
 
         mailSender.send(message);
     }

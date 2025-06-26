@@ -46,6 +46,7 @@ public enum University {
 
     // Brașov
     UNITBV,     // Universitatea Transilvania din Brașov
+    AFAHC,       // Academia Forțelor Aeriene "Henri Coandă" din Brașov
 
     // Constanța
     UOC,        // Universitatea "Ovidius" din Constanța
@@ -69,8 +70,5 @@ public enum University {
     VALAHIA,    // Universitatea "Valahia" din Târgoviște
 
     // Târgu Jiu
-    UCB,        // Universitatea "Constantin Brâncuși" din Târgu Jiu
-
-    // Brașov (militară)
-    AFAHC       // Academia Forțelor Aeriene "Henri Coandă" din Brașov
+    UCB        // Universitatea "Constantin Brâncuși" din Târgu Jiu
 }

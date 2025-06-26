@@ -18,7 +18,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
-import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -31,37 +30,28 @@ public class SecurityConfig {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
-    //cream AuthenticationManager care este "boss-ul" procesului de autentificare
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-    //Configuratia principala pentru security filters si reguli
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource) throws Exception {
 
-        //configuram CORS
         http.cors(cors -> cors.configurationSource(corsConfigurationSource))
-                //CSRF, dezactivat in dev
                 .csrf(csrf -> csrf.disable())
-                //definim regulile URL
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/api/discounts/**").permitAll()
                         .requestMatchers("/api/companies/**").permitAll()
-                        //orice alte request-uri, user-ul trebuie sa fie logat
                         .anyRequest().authenticated())
-                //dezactivam sesiunea din cauza ca jwt nu are state
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                //adaugam filtru jwt inainte de filtrul standart
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
-    //configuram CORS
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();

@@ -26,7 +26,6 @@ public class User {
     @Column(nullable = false, length = 50)
     private String lastName;
 
-    //@JsonIgnore
     @Column(nullable = false, length = 256)
     @Pattern(regexp = "^(?=.*[A-Z]).{8,}$", message = "Parola trebuie să aibă cel puțin 8 caractere și să conțină cel puțin o literă mare.")
     private String password;
@@ -39,8 +38,6 @@ public class User {
     private String verificationCode;
 
     private Boolean isVerified = false;
-
-    private Boolean isBlocked = false;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
@@ -110,14 +107,6 @@ public class User {
 
     public void setVerified(Boolean verified) {
         isVerified = verified;
-    }
-
-    public Boolean getBlocked() {
-        return isBlocked;
-    }
-
-    public void setBlocked(Boolean blocked) {
-        isBlocked = blocked;
     }
 
     public Set<Role> getRoles() {

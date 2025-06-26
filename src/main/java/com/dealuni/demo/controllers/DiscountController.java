@@ -15,7 +15,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
-import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -30,11 +29,14 @@ public class DiscountController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/{userId}")
-    public ResponseEntity<DiscountResponse> createNewDiscount(@Valid @RequestBody DiscountRequest discountRequest, @PathVariable Long userId) {
+    @PostMapping
+    public ResponseEntity<DiscountResponse> createNewDiscount(@Valid @RequestBody DiscountRequest discountRequest, Authentication authentication) {
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Long userId = userDetails.getId();
         DiscountResponse discountResponse = discountService.createNewDiscount(discountRequest, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(discountResponse);
     }
+
 
     @GetMapping
     public ResponseEntity<List<DiscountResponse>> getAllDiscounts() {

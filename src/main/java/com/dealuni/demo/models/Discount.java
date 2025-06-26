@@ -31,10 +31,7 @@ public class Discount {
 
     @NotNull(message = "Lista de orașe nu poate fi null.")
     @Size(min = 1, message = "Lista de orașe trebuie să conțină cel puțin un oraș.")
-    //discount-ul poate sa aiba unul sau mai multe orase
-    //orasele se salveaza intr-un table pentru orase
     @ElementCollection(fetch = FetchType.EAGER)
-    //un oras se salveaza ca un string
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "cities", joinColumns = @JoinColumn(name = "discount_id"))
     @Column(name = "city_enum")
@@ -64,9 +61,7 @@ public class Discount {
     @NotNull(message = "Creatorul discountului e obligatoriu.")
     private User createdBy;
 
-    //un discount poate sa fie numai de la o companie, o companie poate sa aibe multe discounturi
     @ManyToOne(fetch = FetchType.EAGER)
-    //company_id este foreign key, face referinta la id din modelul Company
     @JoinColumn(name = "company_id", referencedColumnName = "id")
     @NotNull(message = "ID-ul companiei este obligatoriu.")
     private Company company;
