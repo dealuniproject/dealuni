@@ -14,7 +14,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -62,10 +61,8 @@ public class AuthController {
             user.setRoles(registerRequest.getRoles());
         }
 
-        // Înregistrează userul (cu cod verificare și status dezactivat)
         userService.registerNewUser(user);
 
-        // Crează un răspuns simplu (poți să adaugi mesaj despre verificarea emailului)
         RegisterResponse response = new RegisterResponse(user.getId(), "User-ul s-a înregistrat cu succes. Verifică emailul pentru codul de confirmare.", user.getUsername(), user.getFirstName(), user.getLastName(), user.getUniversityName().name(), user.getRoles());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -98,26 +95,20 @@ public class AuthController {
 
         try {
 
-            //autetinficam user-ul
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
 
-            //facem autentificarea securizata
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            //obtinem detalii despre User
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-            //generam JWT token
-
             String jwt = jwtUtil.generateToken(userDetails);
-            ResponseCookie jwtCookie = ResponseCookie.from("jwt", jwt).httpOnly(true) //nu permite la JavaScript sa ia cookie
-                    .secure(false) //IMPORTANT SA SCHIMBAM LA PRODUCTION IN TRUE
-                    .path("/") //cookies sunt disponibili in toata aplicatia
-                    .maxAge(10 * 60 * 60) // valida pentru 10h
-                    .sameSite("Strict") //Lax & none
+            ResponseCookie jwtCookie = ResponseCookie.from("jwt", jwt).httpOnly(true)
+                    .secure(false)
+                    .path("/")
+                    .maxAge(10 * 60 * 60)
+                    .sameSite("Strict")
                     .build();
 
-            //cream obiect response
             User user = userService.findUserByUsername(userDetails.getUsername());
 
             AuthResponse authResponse = new AuthResponse(
@@ -129,7 +120,6 @@ public class AuthController {
 
             return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).body(authResponse);
 
-            //returnam response cu cookie-header si body
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Username sau parolă incorectă.");
         }
@@ -138,7 +128,7 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
 
-        ResponseCookie jwtCookie = ResponseCookie.from("jwt", "").httpOnly(true).secure(false) //CHANGE TO TRUE WHEN PUSHING TO PRODUCTION
+        ResponseCookie jwtCookie = ResponseCookie.from("jwt", "").httpOnly(true).secure(false)
                 .path("/").maxAge(0).sameSite("Strict").build();
 
         SecurityContextHolder.clearContext();

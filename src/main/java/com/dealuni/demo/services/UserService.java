@@ -11,12 +11,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
-//Ne spune ca e un service class
 @Service
 public class UserService {
 
-    //Constructor injection, we are injecting user repository inside the user service
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
@@ -28,7 +27,6 @@ public class UserService {
     }
 
     public void registerNewUser(User user) {
-        // criptează parola
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
 
@@ -36,17 +34,13 @@ public class UserService {
             user.setRoles(Set.of(Role.USER));
         }
 
-        // generează cod de verificare
         String verificationCode = generateVerificationCode();
         user.setVerificationCode(verificationCode);
 
-        // setează contul ca dezactivat până la verificare
         user.setVerified(false);
 
-        // salvează userul în baza de date
         userRepository.save(user);
 
-        // trimite email de verificare
         emailService.sendVerificationEmail(user.getUsername(), verificationCode);
     }
 
@@ -54,57 +48,54 @@ public class UserService {
         return UUID.randomUUID().toString().substring(0, 6).toUpperCase();
     }
 
-    //cauta user-ul dupa username
     public User findByUsername(String username) {
         return userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("Utilizatorul nu a fost găsit."));
     }
 
-    //verifica daca username-ul deja exista
     public boolean existsByUsername(String username) {
         return userRepository.findByUsername(username).isPresent();
     }
 
-    //get all users
     public List<UserResponse> getAllExistingUsers() {
         List<User> allExistingUsers = userRepository.findAll();
         return convertUserEntityToUserResponse(allExistingUsers);
     }
 
-    //get user by id
     public UserResponse getUserById(Long Id) {
         User user = userRepository.findById(Id).orElseThrow(() -> new NoSuchElementException("Utilizatorul nu a fost găsit."));
         return convertUserEntityToUserResponse(user);
     }
 
-    //update user by id
     public UserResponse updateUserById(Long id, UserRequest userRequest) {
         User existingUser = userRepository.findById(id).orElseThrow(() -> new RuntimeException("Utilizatorul nu a fost găsit."));
 
-        //daca exista un firstname in request, ii dau userului existent un alt firstname
         if (userRequest.getFirstName() != null) {
             existingUser.setFirstName(userRequest.getFirstName());
         }
 
-        //daca exista un lastname in request, ii dau userului un alt lastname
         if (userRequest.getLastName() != null) {
             existingUser.setLastName(userRequest.getLastName());
         }
 
-        //daca exista o universitate in request, ii dau userului o alta universitate
         if (userRequest.getUniversityName() != null) {
             existingUser.setUniversityName(University.valueOf(userRequest.getUniversityName()));
         }
 
-        //daca exista o parola in request, ii dau userului o alta parola
         if (userRequest.getPassword() != null) {
             existingUser.setPassword(userRequest.getPassword());
+        }
+
+        if (userRequest.getRoles() != null) {
+            Set<Role> newRoles = userRequest.getRoles().stream()
+                    .map(Role::valueOf)
+                    .collect(Collectors.toSet());
+            existingUser.setRoles(newRoles);
         }
 
         User updatedUser = userRepository.save(existingUser);
         return convertUserEntityToUserResponse(updatedUser);
     }
 
-    //delete user by id
     public void deleteUserById(Long id) {
         userRepository.deleteById(id);
     }
@@ -129,7 +120,6 @@ public class UserService {
         userRepository.save(user);
     }
 
-    //metod overload
     public List<UserResponse> convertUserEntityToUserResponse(List<User> users) {
         List<UserResponse> userResponses = new ArrayList<>();
         for (User user : users) {
@@ -138,7 +128,6 @@ public class UserService {
         return userResponses;
     }
 
-    //metoda pentru converti un obiect user intr-un user response
     public UserResponse convertUserEntityToUserResponse(User user) {
         UserResponse userResponse = new UserResponse();
         userResponse.setId(user.getId());
@@ -146,12 +135,11 @@ public class UserService {
         userResponse.setFirstName(user.getFirstName());
         userResponse.setLastName(user.getLastName());
         userResponse.setUniversityName(user.getUniversityName().name());
+        userResponse.setRoles(user.getRoles());
         userResponse.setVerified(user.getVerified());
-        userResponse.setBlocked(user.getBlocked());
         return userResponse;
     }
 
-    //metoda pentru converti un request intr-un obiect user
     public User convertUserRequestToUserEntity(UserRequest userRequest) {
         User user = new User();
         user.setUsername(userRequest.getUsername());

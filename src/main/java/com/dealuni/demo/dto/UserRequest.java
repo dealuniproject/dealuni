@@ -3,6 +3,8 @@ package com.dealuni.demo.dto;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.Pattern;
 
+import java.util.List;
+
 public class UserRequest {
 
     @Column(unique = true, nullable = false, length = 60)
@@ -24,12 +26,15 @@ public class UserRequest {
     @Pattern(regexp = "^(?=.*[A-Z]).{8,}$", message = "Parola trebuie să aibă cel puțin 8 caractere și să conțină cel puțin o literă mare.")
     private String password;
 
-    public UserRequest(String username, String firstName, String lastName, String universityName, String password) {
+    private List<String> roles;
+
+    public UserRequest(String username, String firstName, String lastName, String universityName, String password, List<String> roles) {
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
         this.universityName = universityName;
         this.password = password;
+        this.roles = roles;
     }
 
     public UserRequest() {
@@ -73,5 +78,13 @@ public class UserRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
     }
 }

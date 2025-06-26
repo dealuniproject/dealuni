@@ -48,13 +48,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String jwt = null;
 
-        //incercam sa obtinem jwt din Authorization Header
         String headerToken = request.getHeader("Authorization");
         if (StringUtils.hasText(headerToken) && headerToken.startsWith("Bearer ")) {
             jwt = headerToken.substring(7);
         }
 
-        //daca jwt nu e in header incercam sa-l obtinem din cookie
         if (jwt == null && request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
                 if ("jwt".equals(cookie.getName())) {
@@ -64,25 +62,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
 
-        //daca avem un jwt si user-ul nu este autentificat
         if (jwt != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             try {
-                //exatragem username din token
 
                 String username = jwtUtil.extractUsername(jwt);
 
-                //obtinem detalii despre user din db
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-                //validam token si cream o autentificare valida daca token-ul este valid
                 if (jwtUtil.validateToken(jwt, userDetails)) {
                     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
-                    //adaugam request details pentru extra securitate
                     authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                    //setam autentificarea inapoi in contextul security
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                 }
             } catch (JwtException e) {
@@ -91,7 +83,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
         }
-        //continuam la urmatorul lant de filtre
         filterChain.doFilter(request, response);
     }
 }

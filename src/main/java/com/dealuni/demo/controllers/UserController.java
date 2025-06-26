@@ -18,20 +18,17 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-//Ne spune ca e un controller
 @RestController
-//Mapping all the requests
+
 @RequestMapping("/api/users")
 public class UserController {
 
-    //Constructor injection, we are injecting user service inside the user controler
     private final UserService userService;
 
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
-    //get all users
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<UserResponse>> getAllUsers() {
@@ -39,18 +36,15 @@ public class UserController {
         return ResponseEntity.ok(userResponseList);
     }
 
-    //get user by id
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
         UserResponse userResponse = userService.getUserById(id);
         return ResponseEntity.ok(userResponse);
     }
 
-    //update user by id
     @PatchMapping("/{id}")
     public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @Valid @RequestBody UserRequest userRequest, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        // dacă userul NU e admin și vrea să editeze pe altcineva -> interzis
         boolean isAdmin = userDetails.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
 
         if (!isAdmin && !userDetails.getId().equals(id)) {
@@ -61,8 +55,7 @@ public class UserController {
         return ResponseEntity.ok(userResponse);
     }
 
-
-    //delete user by id
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUserById(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
